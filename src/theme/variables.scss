@@ -76,7 +76,7 @@
   --ion-color-light-tint: #f5f6f9;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark_) {
   /*
    * Dark Colors
    * -------------------------------------------
@@ -226,3 +226,16 @@
     --ion-tab-bar-background: #1f1f1f;
   }
 }
+
+$colors: (
+  primary:    #488aff,
+  secondary:  #32db64,
+  danger:     #f53d3d,
+  light:      #f4f4f4,
+  dark:       #222, 
+  baseColor: white,
+  colorRed : #F44236,
+  colorGray    :#939391,
+  youtube: #FF0000,
+  green: green
+);

@@ -1,0 +1,55 @@
+<ion-content >
+  <div *ngIf="isLogin ==true ">
+    <div class="login-header">
+      <div class="login-header-icon">
+        <!-- <ion-icon  slot="start" name="logo-usd"></ion-icon> -->
+        <img src="assets/img/bg-header.jpg" >
+        <ion-text class="header-text">
+          <h1>Home</h1>
+          <p>Selamat datang <b>{{user}}</b></p>
+        </ion-text>
+      </div>
+    </div>
+    <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="satu" (click)="goTo('jual')" padding>           
+              <p>Jual</p>           
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card  class="dua" (click)="goTo('beli')" padding>
+            <p>Beli</p>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="tiga" (click)="goTo('master')" padding>
+            <p>Master</p>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="empat"  (click)="goTo('cek')" padding>
+            <p>Cek harga</p>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col col-6>
+          <ion-card class="enam" (click)="goTo('transaksi')" padding>
+            <p>Transaksi</p>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="lima" (click)="goToLogout()">
+            <p>Logout</p>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    </div>
+
+  </div>
+</ion-content>
