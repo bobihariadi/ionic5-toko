@@ -21,7 +21,8 @@ export class TransaksiPage implements OnInit {
   page: number = 0
   limit: number = 5
   totalRow: number = 0
-  arrdata: any =[]
+  arrdata: any = []
+  searchTerm: string = "";
 
   constructor(
     private router: Router,
@@ -39,24 +40,33 @@ export class TransaksiPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+    let where = '';
+    if(this.searchTerm !=""){
+      where = "where b.nama_barang like '%" + this.searchTerm + "%'";
+    }
     let arrdata = {
       "action": "listtransaksi",
       "table": "",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by id asc"
+      "order": "order by id desc",
+      "where": where
     };
 
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
       .subscribe(data => {
-        this.infiniteScroll.disabled = false;
-        this.showList = true;
         this.arrList = data;
-        if (event) {
-          event.target.complete();
-        } else {
+        if(!this.arrList.length){
+          this.arrList = [];
+        }else{
+          this.infiniteScroll.disabled = false;
+          this.showList = true;
           this.totalRow = data[0].total_row;
+          if (event) {
+            event.target.complete();
+          }
         }
       }, error => {
+        console.log('sini');
         console.log(error);
       })
   }
@@ -73,11 +83,18 @@ export class TransaksiPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+    
+    let where = '';
+    if(this.searchTerm !=""){
+      where = "where b.nama_barang like '%" + this.searchTerm + "%'";
+    }
+
     let arrdata = {
       "action": "listtransaksi",
       "table": "",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by id asc"
+      "order": "order by id desc",
+      "where": where
     };
 
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
@@ -106,5 +123,21 @@ export class TransaksiPage implements OnInit {
       this.getData();
     });
   }
+
+  setFilteredItems(ev: any) {
+    const val = ev.target.value;
+    this.searchTerm = val;
+    this.page = 0;
+    this.getData();
+  }
+
+  cleared(ev: any){
+    const val = ev.target.value;
+    this.searchTerm = val;
+    this.page = 0;
+    this.getData();
+  }
+
+ 
 
 }
