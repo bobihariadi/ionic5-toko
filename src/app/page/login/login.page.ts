@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ToastController } from '@ionic/angular';
+import { ToastController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import {api_base_url} from '../../../config';
+import {api_base_url} from 'src/config';
 
 
 @Component({
@@ -17,15 +17,18 @@ export class LoginPage implements OnInit {
   fakeList: Array<any> = new Array(5);
   username: string="";
   password: string="";
+  subscription: any
+
   constructor(
     private http: HttpClient,
     private toastCtrl: ToastController,
     private storageCtrl: Storage,
     public router: Router,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private platform: Platform
   ) {
     this.statusBar.overlaysWebView(true);
-    this.statusBar.backgroundColorByHexString('#007e00')
+    this.statusBar.backgroundColorByHexString('#008000')
     this.storageCtrl.get('isLogin').then((val) => {
       if (val) {
         this.router.navigate(['home'],{replaceUrl: true});
@@ -35,9 +38,7 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.storageCtrl.get('isLogin').then((val) => {
-      console.log(val);
       if (val) {
-        // this.router.navigateByUrl('/home');
         this.router.navigate(['home'],{replaceUrl: true});
       }
     });
@@ -53,7 +54,7 @@ export class LoginPage implements OnInit {
       "username": this.username,
       "table": "M_USER"
     };
-    console.log(this.username);
+
     if ((!this.username) || (!this.password)) {
       this.showTost('Username or Password canot be empty');
       return false;
@@ -77,6 +78,16 @@ export class LoginPage implements OnInit {
       position: "bottom"
     });
     toast.present();
+  }
+
+  ionViewDidEnter() {
+    this.subscription = this.platform.backButton.subscribe(() => {
+        navigator['app'].exitApp();
+    });
+  }
+
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
   }
 
 }
