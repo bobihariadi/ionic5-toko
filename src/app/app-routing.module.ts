@@ -35,6 +35,34 @@ const routes: Routes = [
     path: 'cek',
     loadChildren: () => import('./page/cek/cek.module').then( m => m.CekPageModule)
   },
+  {
+    path: 'modalbarang',
+    loadChildren: () => import('./page/modalbarang/modalbarang.module').then( m => m.ModalbarangPageModule)
+  },
+  {
+    path: 'listbarang',
+    loadChildren: () => import('./page/listbarang/listbarang.module').then( m => m.ListbarangPageModule)
+  },
+  {
+    path: 'modaltipe',
+    loadChildren: () => import('./page/modaltipe/modaltipe.module').then( m => m.ModaltipePageModule)
+  },
+  {
+    path: 'listtipe',
+    loadChildren: () => import('./page/listtipe/listtipe.module').then( m => m.ListtipePageModule)
+  },
+  {
+    path: 'listharga',
+    loadChildren: () => import('./page/listharga/listharga.module').then( m => m.ListhargaPageModule)
+  },
+  {
+    path: 'modalharga',
+    loadChildren: () => import('./page/modalharga/modalharga.module').then( m => m.ModalhargaPageModule)
+  },
+  {
+    path: 'daftarbarang',
+    loadChildren: () => import('./page/daftarbarang/daftarbarang.module').then( m => m.DaftarbarangPageModule)
+  },
 ];
 
 @NgModule({ 

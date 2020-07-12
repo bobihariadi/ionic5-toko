@@ -21,3 +21,8 @@ ion-toolbar {
 .header-md::after{
     background-image: none !important;
 }
+
+.scroll-content {    
+    margin-top: 165px;
+    z-index: 1;
+}

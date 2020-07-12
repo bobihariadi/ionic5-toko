@@ -57,13 +57,10 @@ ion-button {
 .bg-footer {
     position: absolute;
     transform: rotate(180deg);
-    // padding-bottom: -110px;
     background-color: '#008000';
     margin-top: -200px;
-    img{
-        // position: relative;
-        // right: 0;
-        // margin-top: -130px   ;
-        
-    }
+}
+
+ion-item.item-has-focus>ion-label {
+    color: #008000; //label color
 }

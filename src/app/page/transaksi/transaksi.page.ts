@@ -74,6 +74,7 @@ export class TransaksiPage implements OnInit {
   refreshData(event) {
     this.page = 0;
     this.showList = false;
+    this.searchTerm = '';
     event.target.disabled = false;
     this.getData(event);
     event.target.disabled = false;
@@ -137,7 +138,4 @@ export class TransaksiPage implements OnInit {
     this.page = 0;
     this.getData();
   }
-
- 
-
 }

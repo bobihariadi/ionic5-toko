@@ -1,0 +1,59 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Form {{action}} Barang</ion-title>
+    <ion-buttons (click)="closeModal()" slot="start">
+      <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <div class="ion-padding" *ngIf="showList" >
+    <ion-item >
+      <ion-label position="floating" >Kode Barang</ion-label>
+      <ion-input type="text" [(ngModel)]="kode"  (ionFocus)="getScan()" ></ion-input>
+      <ion-input type="number" hidden [(ngModel)]="passId" ></ion-input>
+    </ion-item>
+    <ion-item >
+      <ion-label position="floating" >Nama Barang</ion-label>
+      <ion-input type="text" [(ngModel)]="nama_barang" autocomplete="off" ></ion-input>
+    </ion-item>
+    <ion-item >
+      <ion-label position="floating">Tipe</ion-label>
+      <ion-select [(ngModel)]="tipe_barang" >
+        <ion-select-option type="text" *ngFor="let tipe of arrTipe" value="{{tipe.tipe}}"  >{{tipe.deskripsi}}</ion-select-option>        
+      </ion-select>
+    </ion-item>
+    <ion-item >
+      <ion-label position="floating" >Jumlah Barang</ion-label>
+      <ion-input type="number" [(ngModel)]="jumlah" autocomplete="off" ></ion-input>
+    </ion-item>
+    <ion-item >
+      <ion-label position="floating">Aktif</ion-label>
+      <ion-select [(ngModel)]="isactive" >
+        <ion-select-option  type="text" *ngFor="let item of listActive" value="{{item.val}}">{{item.valdesc}}</ion-select-option>        
+      </ion-select>
+    </ion-item>    
+    <ion-button (click)="saveForm()" expand="block" fill="clear" class="bSave">
+      {{(action == 'Add' ? 'SAVE':'UPDATE')}}
+    </ion-button>    
+  </div>
+
+  <div *ngIf="!showList" class="scroll-content">
+    <ion-list>      
+      <ion-item *ngFor="let flist of fakeList">
+        <ion-label>
+          <h3>
+            <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+          </h3>
+          <p>
+            <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+          </p>
+          <p>
+            <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+          </p>
+        </ion-label>
+      </ion-item>      
+    </ion-list>
+  </div>
+</ion-content>

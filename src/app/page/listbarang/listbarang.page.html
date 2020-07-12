@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title slot="end">Barang</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="presentModal('','Add')">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-refresher slot="fixed" pullFactor="0.5" pullMin="100" pullMax="100" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <div class="login-header">
+    <div class="login-header-icon">
+      <img src="assets/img/bg-header.jpg">
+    </div>
+  </div>
+  <div class="ion-padding scroll-content" *ngIf="showList">
+    <ion-searchbar expand="full" [(ngModel)]="searchTerm" (ionChange)="setFilteredItems($event)" (ionClear)="cleared($event)" ></ion-searchbar>
+    <ion-list>
+      <ion-item *ngFor="let list of arrList">
+        <ion-label> 
+          <p><b>{{list['nama_barang']}}</b></p>
+          <p>tipe barang : {{list['deskripsi']}}</p>
+          <p>Jumlah : {{list['jml']}}</p>
+          <p>Eceran : {{list['harga_eceran']}}</p>
+          <p>Grosir : {{list['harga_grosir']}}</p>
+          <p>Aktif : {{list['isactive']}}</p>
+        </ion-label>
+        <ion-icon name="pencil-outline" size="small" slot="end" (click)="presentModal(list.id,'Edit')"></ion-icon>
+        <ion-icon name="close-outline" size="medium" slot="end" (click)="confimData(list.id)"></ion-icon>
+      </ion-item>
+    </ion-list>
+  </div>
+  <ion-infinite-scroll threshold="5%" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+
+  <div *ngIf="!showList" class="scroll-content">
+    <ion-list>      
+      <ion-item *ngFor="let flist of fakeList">
+        <ion-label>
+          <h3>
+            <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+          </h3>
+          <p>
+            <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+          </p>
+          <p>
+            <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+          </p>
+        </ion-label>
+      </ion-item>      
+    </ion-list>
+  </div>
+
+</ion-content>

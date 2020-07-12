@@ -34,7 +34,6 @@ export class HomePage implements OnInit {
     this.statusBar.styleBlackTranslucent();
     this.statusBar.backgroundColorByHexString('#008000');
     this.storageCtrl.get('isLogin').then((val) => {
-      console.log(val);
       if (!val) {
         this.router.navigate(['login'], { replaceUrl: true });
       } else {

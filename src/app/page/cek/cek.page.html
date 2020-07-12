@@ -1,18 +1,38 @@
-<ion-header >
-  <ion-toolbar >
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title slot="end" >Cek Harga</ion-title>
+    <ion-title slot="end">Cek Harga</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen>
   <div class="login-header">
     <div class="login-header-icon">
-      <img src="assets/img/bg-header.jpg" >
+      <img src="assets/img/bg-header.jpg">
       <ion-text class="header-text">
       </ion-text>
     </div>
+  </div>
+  
+
+  <div  class="ion-padding scroll-content">
+    <ion-item>
+      <ion-label position="floating">Kode Barang</ion-label>
+      <ion-input type="text" [(ngModel)]="kode" (ionFocus)="getScan()" (ionChange)="getHarga()"></ion-input>
+    </ion-item>
+  </div>
+
+  <div class="ion-padding" *ngIf="showList">
+    <ion-card *ngFor="let list of arrList"> 
+      <ion-item>
+        <ion-label>{{list['tipe_beli_desc']}}</ion-label>
+        <ion-text slot="end">Rp <b>{{list['harga']}}</b></ion-text>
+      </ion-item>    
+      <ion-card-content>
+        <h2>{{list['nama_barang']}}</h2>
+      </ion-card-content>     
+    </ion-card>
   </div>
 </ion-content>

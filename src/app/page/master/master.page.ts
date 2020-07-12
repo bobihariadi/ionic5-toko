@@ -11,10 +11,9 @@ export class MasterPage implements OnInit {
 
   constructor(
     private storageCtrl: Storage,
-    private router: Router
+    private router: Router,
   ) { 
     this.storageCtrl.get('isLogin').then((val) => {
-      console.log(val);
       if(!val){
         this.router.navigate(['login'],{replaceUrl: true});
       }
@@ -22,6 +21,10 @@ export class MasterPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  goTo(param) {
+    this.router.navigateByUrl(param);
   }
 
 }

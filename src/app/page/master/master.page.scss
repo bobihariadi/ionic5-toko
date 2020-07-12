@@ -21,3 +21,41 @@ ion-toolbar {
 .header-md::after{
     background-image: none !important;
 }
+
+.ion-padding{
+    margin-top: 150px;
+    z-index: 999;
+}
+
+ion-card{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.satu{
+    background-color:  #267130;
+    color: #ffffff;
+}
+.dua{
+    background-color:  #916f2f;
+    color: #ffffff;
+}
+.tiga{
+    background-color:  #1e5b5b;
+    color: #ffffff;
+}
+.empat{
+    background-color:  #4f3768;
+    color: #ffffff;
+}
+.lima{
+    background-color:  #614032;
+    color: #ffffff;
+}
+.enam{
+    background-color:  #3c5a38;
+    color: #ffffff;
+}
