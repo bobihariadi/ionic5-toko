@@ -196,7 +196,7 @@ export class ModalbarangPage implements OnInit {
       "except":"",
       "where": {"id":this.passId}
     };
-
+    console.log(arrdata);
     this.tipe_barang = '';
     this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
       .subscribe(data => {

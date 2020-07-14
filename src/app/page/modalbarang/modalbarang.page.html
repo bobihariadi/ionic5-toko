@@ -11,7 +11,10 @@
   <div class="ion-padding" *ngIf="showList" >
     <ion-item >
       <ion-label position="floating" >Kode Barang</ion-label>
-      <ion-input type="text" [(ngModel)]="kode"  (ionFocus)="getScan()" ></ion-input>
+      <ion-input type="text" [(ngModel)]="kode"  ></ion-input>
+      <ion-button class="scan" (click)="getScan()" slot="end" size="default" expand="block" fill="solid" >
+       <ion-icon slot="icon-only" name="scan-outline"></ion-icon>
+      </ion-button>
       <ion-input type="number" hidden [(ngModel)]="passId" ></ion-input>
     </ion-item>
     <ion-item >
