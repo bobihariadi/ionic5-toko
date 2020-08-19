@@ -4,40 +4,23 @@ import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { api_base_url } from 'src/config';
-import { DaftarbarangPage } from '../daftarbarang/daftarbarang.page';
 
 @Component({
-  selector: 'app-modalharga',
-  templateUrl: './modalharga.page.html',
-  styleUrls: ['./modalharga.page.scss'],
+  selector: 'app-modalcabang',
+  templateUrl: './modalcabang.page.html',
+  styleUrls: ['./modalcabang.page.scss'],
 })
-export class ModalhargaPage implements OnInit {
-  id_barang: number
-  tipe_beli: string
-  kode: string
-  nama_barang: string
+export class ModalcabangPage implements OnInit {
+  passId: number
   action: string
   jwt: any
-  user_id: any
-  arrTipe: any
+  arrList: any
   fakeList: Array<any> = new Array(4);
   showList: boolean = false;
-  harga: number
-  arrdata:any
-
-  tipe_barang: any
-  jumlah: number
-  arrTipeBeli: any[] = [
-    {
-      'val': 'E',
-      'valdesc': 'Eceran'
-    },
-    {
-      'val': 'G',
-      'valdesc': 'Grosir'
-    }
-  ]
-
+  id: number
+  nama: any
+  alamat: any
+  
   constructor(
     private modalCtrl: ModalController,
     private navParams: NavParams,
@@ -47,7 +30,7 @@ export class ModalhargaPage implements OnInit {
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private alerCtrl: AlertController
-  ) {
+  ) { 
     this.storageCtrl.get('isLogin').then((val) => {
       if (!val) {
         this.router.navigate(['login'], { replaceUrl: true });
@@ -59,14 +42,11 @@ export class ModalhargaPage implements OnInit {
   }
 
   ngOnInit() {
-    this.id_barang = this.navParams.get('id_barang');
-    this.tipe_beli = this.navParams.get('tipe_beli');
-    this.kode = this.navParams.get('code_barang');
-    this.nama_barang = this.navParams.get('nama_barang');
+    this.passId = this.navParams.get('pass_id');
     this.action = this.navParams.get('action');
     this.storageCtrl.get('dataLogin').then(async (data) => {
       this.jwt = data[0].jwt;
-      this.user_id = data[0].id;
+
       if (this.action == 'Edit') {
         this.getData();
       } else {
@@ -75,33 +55,24 @@ export class ModalhargaPage implements OnInit {
     });
   }
 
-  isReadonly(){
-    if (this.action == 'Edit') {
-      return true;
-    }else{
-      return false;
-    }
-  }
-
- getData() {
+  async getData() {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = "where id_barang =" + this.id_barang +" and tipe_beli='"+this.tipe_beli+"'";
+    let where = "where branch_id =" + this.passId;
 
     let arrdata = {
       "action": "rowtable",
-      "table": "m_harga",
+      "table": "m_branch",
       "limit": "",
       "order": "",
       "where": where
     };
-    console.log(arrdata);
+
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
       .subscribe(data => {
-        this.harga = data['harga'];
-        this.jumlah = data['jml'];
-
+        this.nama = data['branch_name'];
+        this.alamat = data['branch_address'];
         this.showList = true;
 
       }, error => {
@@ -115,14 +86,6 @@ export class ModalhargaPage implements OnInit {
       "bb": "bb"
     }
     this.modalCtrl.dismiss(datatest);
-  }
-  
-  onChange(e){
-    if(e.target.value=="E"){
-      this.jumlah = 1;
-    }else{
-      this.jumlah = 12;
-    }
   }
 
   async saveForm(){
@@ -160,39 +123,23 @@ export class ModalhargaPage implements OnInit {
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     
-    if(this.action =='Edit'){
-      this.arrdata = {
-        "action": this.action,
-        "table": "m_harga",
-        "data": {
-          "harga": this.harga,
-          "jml": this.jumlah        },
-        "except":"",
-        "where": {"id_barang":this.id_barang, "tipe_beli":this.tipe_beli}
-      };
-    }else{
-      this.arrdata = {
-        "action": this.action,
-        "table": "m_harga",
-        "data": {
-          "harga": this.harga,
-          "jml": this.jumlah,
-          "id_barang": this.id_barang,
-          "tipe_beli": this.tipe_beli
-        },
-        "except":"",
-        "where": ""
-      };
-    }
+    let arrdata = {
+      "action": this.action,
+      "table": "m_branch",
+      "data": {
+        "branch_name": this.nama,
+        "branch_address": this.alamat
+      },
+      "except":"",
+      "where": {"branch_id":this.passId}
+    };
 
-    this.tipe_barang = '';
-    this.http.post(api_base_url + 'api/v2/postdata', this.arrdata, { headers: headers })
+    this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
       .subscribe(data => {
-        console.log(data);        
-          loading.dismiss();
-          this.showTost('Success');
-          this.closeModal();
-        
+        console.log(data);  
+        loading.dismiss();
+        this.showTost('Success');
+        this.closeModal();
       }, error => {
         loading.dismiss();
         this.showTost('Failed');
@@ -207,22 +154,6 @@ export class ModalhargaPage implements OnInit {
       position: "bottom"
     });
     toast.present();
-  }
-
-  async getBarang(){
-    if (this.action == 'Add') {
-      const modal = await this.modalCtrl.create({
-        component: DaftarbarangPage,
-        cssClass: 'my-custom-class'
-      });
-  
-      modal.onDidDismiss().then((r) => {
-        this.kode = r.data.codeBarang;
-        this.id_barang = r.data.idbarang;
-        this.nama_barang = r.data.namaBarang;
-      });
-      return await modal.present();      
-    }
   }
 
 }

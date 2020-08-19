@@ -23,6 +23,8 @@ export class ListtipePage implements OnInit {
   totalRow: number = 0
   arrdata: any = []
   searchTerm: string = "";
+  role: any
+  isAdministrator: any = false
 
   constructor(
     private modalCtrl: ModalController,
@@ -43,6 +45,10 @@ export class ListtipePage implements OnInit {
   ngOnInit() {
     this.storageCtrl.get('dataLogin').then((data) => {
       this.jwt = data[0].jwt;
+      this.role = data[0].level;
+      if(this.role == '1'){
+        this.isAdministrator = true;
+      }
       this.getData();
     });
   }

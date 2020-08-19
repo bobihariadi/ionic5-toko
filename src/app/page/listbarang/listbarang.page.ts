@@ -23,6 +23,9 @@ export class ListbarangPage implements OnInit {
   totalRow: number = 0
   arrdata: any = []
   searchTerm: string = "";
+  branch_id: any
+  role: any
+  isAdministrator: any = false
 
   constructor(
     private modalCtrl: ModalController,
@@ -43,6 +46,11 @@ export class ListbarangPage implements OnInit {
   ngOnInit() {
     this.storageCtrl.get('dataLogin').then((data) => {
       this.jwt = data[0].jwt;
+      this.branch_id = data[0].branch_id;
+      this.role = data[0].level;
+      if(this.role == '1'){
+        this.isAdministrator = true;
+      }
       this.getData();
     });
   }
@@ -133,9 +141,14 @@ export class ListbarangPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = '';
+    let where = 'where 1=1 ';
+    
+    if(this.role != '1'){
+      where = where+ ' and a.branch_id ='+this.branch_id;
+    }
+
     if (this.searchTerm != "") {
-      where = "where a.nama_barang like '%" + this.searchTerm + "%'";
+      where = where+" and a.nama_barang like '%" + this.searchTerm + "%'";
     }
     let arrdata = {
       "action": "listbarang",
@@ -177,9 +190,14 @@ export class ListbarangPage implements OnInit {
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
 
-    let where = '';
+    let where = 'where 1=1 ';
+    
+    if(this.role != '1'){
+      where = where+ ' and a.branch_id ='+this.branch_id;
+    }
+
     if (this.searchTerm != "") {
-      where = "where a.nama_barang like '%" + this.searchTerm + "%'";
+      where = " and a.nama_barang like '%" + this.searchTerm + "%'";
     }
 
     let arrdata = {

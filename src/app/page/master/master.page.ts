@@ -8,7 +8,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./master.page.scss'],
 })
 export class MasterPage implements OnInit {
-
+  role: any
+  isAdministrator: any = false
+  jwt: any
+  
   constructor(
     private storageCtrl: Storage,
     private router: Router,
@@ -21,6 +24,13 @@ export class MasterPage implements OnInit {
   }
 
   ngOnInit() {
+    this.storageCtrl.get('dataLogin').then((data) => {
+      this.jwt = data[0].jwt;
+      this.role = data[0].level;
+      if(this.role == '1'){
+        this.isAdministrator = true;
+      }
+    });
   }
 
   goTo(param) {

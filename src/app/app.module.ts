@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,6 +26,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
     StatusBar,
     SplashScreen,
     BarcodeScanner,
+    BluetoothSerial,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

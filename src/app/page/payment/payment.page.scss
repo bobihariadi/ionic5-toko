@@ -1,9 +1,9 @@
-ion-header ion-toolbar {
+ion-toolbar {
     --background: transparent;
     --ion-color-base: transparent !important;
     ion-title{
         color: #ffffff;
-    };
+    }
 }
 
 .login-header-icon {
@@ -34,17 +34,20 @@ ion-header ion-toolbar {
     z-index: 1;
 }
 
-.scan{
-    --background:#008000 !important;
+.rata_kanan{
+    text-align: right;
 }
 
-.btambah{
-    --background: #008000 !important;
-    margin-top: 20px;
+.rata_kanan_margin{
+    text-align: right;
+    margin-right: 10px;
 }
 
-.unbounded{
-    background-color:#008000;
+.col{
+    border-top:5px solid #008000;
+}
+ion-footer{
+    background: #008000;
 }
 
 ion-footer ion-button{
@@ -52,13 +55,4 @@ ion-footer ion-button{
     margin-left: 0px;
     background-color: transparent;
     --background: #008000;
-}
-
-.rata_kanan{
-    text-align: right;
-}
-
-.iconClose{
-    position: relative;
-    right: 0;
 }

@@ -3,15 +3,15 @@ import { IonInfiniteScroll, ModalController, AlertController, LoadingController,
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ModalhargaPage } from '../modalharga/modalharga.page';
+import { ModaluserPage } from '../modaluser/modaluser.page';
 import { api_base_url } from 'src/config';
 
 @Component({
-  selector: 'app-listharga',
-  templateUrl: './listharga.page.html',
-  styleUrls: ['./listharga.page.scss'],
+  selector: 'app-listuser',
+  templateUrl: './listuser.page.html',
+  styleUrls: ['./listuser.page.scss'],
 })
-export class ListhargaPage implements OnInit {
+export class ListuserPage implements OnInit {
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
   fakeList: Array<any> = new Array(7);
@@ -19,13 +19,12 @@ export class ListhargaPage implements OnInit {
   arrList: any = []
   jwt: any
   page: number = 0
-  limit: number = 10
+  limit: number = 5
   totalRow: number = 0
   arrdata: any = []
-  searchTerm: string = "";
-  role: any
-  isAdministrator: any = false
-
+  searchTerm: string = ""
+  user_id: any
+  
   constructor(
     private modalCtrl: ModalController,
     private router: Router,
@@ -34,7 +33,7 @@ export class ListhargaPage implements OnInit {
     private alerCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
-  ) {
+  ) { 
     this.storageCtrl.get('isLogin').then((val) => {
       if (!val) {
         this.router.navigate(['login'], { replaceUrl: true });
@@ -45,23 +44,17 @@ export class ListhargaPage implements OnInit {
   ngOnInit() {
     this.storageCtrl.get('dataLogin').then((data) => {
       this.jwt = data[0].jwt;
-      this.role = data[0].level;
-      if(this.role == '1'){
-        this.isAdministrator = true;
-      }
+      this.user_id = data[0].id;
       this.getData();
     });
   }
 
-  async presentModal(pId,tBeli,code,nama,pAct) {
+  async presentModal(pId,pAct) {
     const modal = await this.modalCtrl.create({
-      component: ModalhargaPage,
+      component: ModaluserPage,
       cssClass: 'my-custom-class',
       componentProps:{
-        id_barang:pId,
-        tipe_beli:tBeli,
-        code_barang:code,
-        nama_barang:nama,
+        pass_id:pId,
         action:pAct
       }
     });
@@ -73,11 +66,11 @@ export class ListhargaPage implements OnInit {
     return await modal.present();
   }
 
-  async confimData(param1,param2) {
+  async confimData(param) {
     const alert = await this.alerCtrl.create({
       cssClass: 'my-custom-class',
       header: 'Confirm!',
-      message: 'Are you sure to <strong>delete</strong> this data?',
+      message: 'Are you sure to <strong>non active</strong> this user?',
       buttons: [
         {
           text: 'No',
@@ -88,7 +81,7 @@ export class ListhargaPage implements OnInit {
         }, {
           text: 'Yes',
           handler: () => {
-            this.delData(param1,param2);
+            this.delData(param);
           }
         }
       ]
@@ -97,7 +90,7 @@ export class ListhargaPage implements OnInit {
     await alert.present();
   }
 
-  async delData(id,tipe){
+  async delData(id){
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
       message: 'Please wait...',
@@ -109,11 +102,13 @@ export class ListhargaPage implements OnInit {
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     
     let arrdata = {
-      "action": "Del",
-      "table": "m_harga",
-      "data": "",
+      "action": "Edit",
+      "table": "m_user",
+      "data": {
+        "status_user": "0"
+      },
       "except":"",
-      "where": {"id_barang":id, "tipe_beli":tipe}
+      "where": {"id":id}
     };
 
     this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
@@ -142,15 +137,15 @@ export class ListhargaPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = '';
+    let where = ' where id != '+this.user_id;
     if (this.searchTerm != "") {
-      where = "where b.nama_barang like '%" + this.searchTerm + "%'";
+      where = "where username like '%" + this.searchTerm + "%' and id != "+this.user_id;
     }
     let arrdata = {
-      "action": "listharga",
+      "action": "listuser",
       "table": "",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by b.nama_barang desc",
+      "order": "order by username desc",
       "where": where
     };
 
@@ -188,14 +183,14 @@ export class ListhargaPage implements OnInit {
 
     let where = '';
     if (this.searchTerm != "") {
-      where = "where b.nama_barang like '%" + this.searchTerm + "%'";
+      where = "where username like '%" + this.searchTerm + "%'";
     }
 
     let arrdata = {
-      "action": "listharga",
-      "table": "",
+      "action": "arraytable",
+      "table": "m_user",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by b.nama_barang desc",
+      "order": "order by username desc",
       "where": where
     };
 

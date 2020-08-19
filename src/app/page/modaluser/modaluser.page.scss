@@ -1,0 +1,16 @@
+ion-toolbar {
+    --background: transparent;
+    --ion-color-base: transparent !important;
+}
+
+.sc-ion-buttons-md-h {
+    padding-left: 12px;
+}
+
+ion-item {
+    --highlight-color-focused: #008000;
+}
+
+ion-item.item-has-focus>ion-label {
+    color: #008000; //label color
+}

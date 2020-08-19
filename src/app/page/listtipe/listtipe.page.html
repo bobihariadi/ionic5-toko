@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content fullscreen>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="presentModal('','Add')">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="presentModal('','Add')" *ngIf="isAdministrator">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
@@ -28,8 +28,8 @@
         <ion-label> 
           <p>{{list['deskripsi']}}</p>
         </ion-label>
-        <ion-icon name="pencil-outline" size="small" slot="end" (click)="presentModal(list.tipe,'Edit')"></ion-icon>
-        <ion-icon name="close-outline" size="medium" slot="end" (click)="confimData(list.tipe)"></ion-icon>
+          <ion-icon name="pencil-outline" size="small" slot="end" (click)="presentModal(list.tipe,'Edit')" *ngIf="isAdministrator" ></ion-icon>
+          <ion-icon name="close-outline" size="medium" slot="end" (click)="confimData(list.tipe)" *ngIf="isAdministrator"></ion-icon>
       </ion-item>
     </ion-list>
   </div>

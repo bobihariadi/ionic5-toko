@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title slot="end">Pembayaran</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <div class="login-header">
+    <div class="login-header-icon">
+      <img src="assets/img/bg-header.jpg">
+      <ion-text class="header-text">
+      </ion-text>
+    </div>
+  </div>
+  <div class="ion-padding scroll-content" *ngIf="showList">
+    <ion-card *ngFor="let item of arrBelanja">
+      <ion-item class="ion-activated">
+        <ion-label>Batch: {{item.tmp_batch}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label class="ion-text-wrap">Kode Barang: {{item.tmp_code}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label slot="start">{{item.tmp_jml}} X {{item.tmp_harga_real}}</ion-label>
+        <ion-label class="rata_kanan"><b>{{item.tmp_total_real}}</b></ion-label>
+      </ion-item>
+    </ion-card>
+    <ion-item>
+      <ion-label slot="start"><b>Total</b></ion-label>
+      <ion-label class="rata_kanan_margin"><b>{{total}}</b></ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label slot="start"><b>Bayar</b></ion-label>
+      <ion-input type="number" [(ngModel)]="bayar" class="rata_kanan_margin" (ionChange)="actKembalian()" ></ion-input>
+    </ion-item>
+    <div class="col">
+      <ion-item>
+        <ion-label position="fixed"><b>Kembalian</b></ion-label>
+        <ion-input type="number" class="rata_kanan_margin" readonly [(ngModel)]="kembalian" class="rata_kanan_margin" ></ion-input>
+      </ion-item>    
+    </div>
+  </div>
+<!-- start tambahan -->
+<ion-list>
+  <ion-item *ngFor="let item of bluetoothList" (click)="selectPrinter(item.id)">
+      {{item.name}} {{item.id}}
+  </ion-item>
+  </ion-list>
+  <div>
+      Selected Printer: {{selectedPrinter}}
+  </div>
+  <ion-button expand="full" color="danger" *ngIf='selectedPrinter' (click)="printStuff()">
+  PRINT!
+  </ion-button>
+<!-- end tambahan -->
+
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-toolbar>
+    <ion-button expand="full"  size="large"  (click)="actBayar()">
+      Bayar</ion-button>
+  </ion-toolbar>
+</ion-footer>

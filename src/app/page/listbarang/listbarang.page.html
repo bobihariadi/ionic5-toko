@@ -26,15 +26,16 @@
     <ion-list>
       <ion-item *ngFor="let list of arrList">
         <ion-label> 
-          <p><b>{{list['nama_barang']}}</b></p>
-          <p>tipe barang : {{list['deskripsi']}}</p>
-          <p>Jumlah : {{list['jml']}}</p>
-          <p>Eceran : {{list['harga_eceran']}}</p>
-          <p>Grosir : {{list['harga_grosir']}}</p>
-          <p>Aktif : {{list['isactive']}}</p>
+          <p><b>{{list.nama_barang}}</b></p>
+          <p>tipe barang : {{list.deskripsi}}</p>
+          <p>Jumlah : {{list.jml}}</p>
+          <p>Eceran : {{list.harga_eceran}}</p>
+          <p>Grosir : {{list.harga_grosir}}</p>
+          <p>Cabang : {{list.branch_name}}</p>
+          <p>Aktif : {{list.isactive}}</p>
         </ion-label>
-        <ion-icon name="pencil-outline" size="small" slot="end" (click)="presentModal(list.id,'Edit')"></ion-icon>
-        <ion-icon name="close-outline" size="medium" slot="end" (click)="confimData(list.id)"></ion-icon>
+        <ion-icon name="pencil-outline" size="small" slot="end" (click)="presentModal(list.id,'Edit')" *ngIf="isAdministrator" ></ion-icon>
+        <ion-icon name="close-outline" size="medium" slot="end" (click)="confimData(list.id)" *ngIf="isAdministrator" ></ion-icon>
       </ion-item>
     </ion-list>
   </div>

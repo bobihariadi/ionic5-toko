@@ -17,16 +17,42 @@
     </div>
   </div>
   <div class="ion-padding scroll-content" *ngIf="showList">
+    <div class="branch" *ngIf="isAdministrator">
+      <ion-item>
+        <ion-label position="floating">Cabang</ion-label>
+        <ion-select [(ngModel)]="branch_id" (ionChange)="actCabang($event)">
+          <ion-select-option type="text" *ngFor="let item of arrCabang" value="{{item.branch_id}}">{{item.branch_name}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>      
+    </div>
+    <div>
+      <ion-row>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="floating">Tanggal Awal</ion-label>
+            <ion-datetime displayFormat="DD-MM-YYYY"   placeholder="Pilih Tanggal" [(ngModel)]="startDate" (ionCancel)="clearTgl('startDate')"  (ionChange)="getDataChange()" ></ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="floating">Tanggal Akhir</ion-label>
+            <ion-datetime displayFormat="DD-MM-YYYY"  placeholder="Pilih Tanggal" [(ngModel)]="endDate" (ionCancel)="clearTgl('endDate')" (ionChange)="getDataChange()" ></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </div>
     <ion-searchbar expand="full" [(ngModel)]="searchTerm" (ionChange)="setFilteredItems($event)" (ionClear)="cleared($event)" ></ion-searchbar>
     <ion-list>
-      <ion-item *ngFor="let list of arrList">
+      <ion-item *ngFor="let list of arrList; let i = index">
         <ion-label>
-          <p>No. {{list['id']}}</p>
-          <p>{{list['nama_barang']}}</p>
-          <p>tipe barang : {{list['tipe_barang']}}</p>
-          <p>harga : {{list['harga']}}</p>
-          <p>Jumlah : {{list['jml']}}</p>
-          <p>Total : {{list['total']}}</p>
+          <p>No. {{i+1}}</p>
+          <p>{{list.nama_barang}}</p>
+          <p>tipe barang : {{list.tipe_barang}}</p>
+          <p>Tanggal : {{list.tgl}} &nbsp; jam : {{list.jam}}</p>
+          <p>harga : {{list.harga}}</p>
+          <p>Jumlah : {{list.jml}}</p>
+          <p>Total : <b>{{list.total}}</b></p>
         </ion-label>
       </ion-item>
     </ion-list>

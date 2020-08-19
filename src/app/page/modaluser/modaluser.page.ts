@@ -2,40 +2,39 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams, LoadingController, ToastController, AlertController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { api_base_url } from 'src/config';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { async } from '@angular/core/testing';
 
 @Component({
-  selector: 'app-modalbarang',
-  templateUrl: './modalbarang.page.html',
-  styleUrls: ['./modalbarang.page.scss'],
+  selector: 'app-modaluser',
+  templateUrl: './modaluser.page.html',
+  styleUrls: ['./modaluser.page.scss'],
 })
-export class ModalbarangPage implements OnInit {
+export class ModaluserPage implements OnInit {
   passId: number
   action: string
   jwt: any
   arrList: any
-  arrTipe: any
+  arrCabang: any
+  arrRole: any
   fakeList: Array<any> = new Array(4);
   showList: boolean = false;
   id: number
 
-  kode: any
-  nama_barang: any
-  tipe_barang: any
-  jumlah: number
-  isactive: string = "Y"
-  branch_id: any
+  password: any
+  username: any
+  full_name: any
   role: any
+  cabang:any
+  arrdata: any
+  isactive: string = "1"
   listActive: any[] = [
     {
-      'val': 'Y',
+      'val': '1',
       'valdesc': 'Ya'
     },
     {
-      'val': 'T',
+      'val': '0',
       'valdesc': 'Tidak'
     }
   ]
@@ -46,11 +45,10 @@ export class ModalbarangPage implements OnInit {
     private storageCtrl: Storage,
     private router: Router,
     private http: HttpClient,
-    private barcodeCtrl: BarcodeScanner,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private alerCtrl: AlertController
-  ) {
+  ) { 
     this.storageCtrl.get('isLogin').then((val) => {
       if (!val) {
         this.router.navigate(['login'], { replaceUrl: true });
@@ -58,8 +56,6 @@ export class ModalbarangPage implements OnInit {
     });
     this.storageCtrl.get('dataLogin').then((data) => {
       this.jwt = data[0].jwt;
-      this.branch_id = data[0].branch_id;
-      this.role = data[0].level;
     });
   }
 
@@ -73,38 +69,35 @@ export class ModalbarangPage implements OnInit {
         this.getData();
       } else {
         this.showList = true;
-        this.arrTipe = await this.getTipe();
+        this.arrCabang = await this.getCabang();
+        this.arrRole = await this.getRole();
       }
     });
   }
 
   async getData() {
-    this.arrTipe = await this.getTipe();
+    this.arrCabang = await this.getCabang();
+    this.arrRole = await this.getRole();
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     let where = "where id =" + this.passId;
-    
-    if(this.role != '1'){
-      where = where+ ' and branch_id ='+this.branch_id;
-    }
 
     let arrdata = {
       "action": "rowtable",
-      "table": "m_barang",
+      "table": "m_user",
       "limit": "",
       "order": "",
       "where": where
     };
 
-    this.tipe_barang = '';
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
       .subscribe(data => {
-        this.kode = data['code'];
-        this.nama_barang = data['nama_barang'];
-        this.tipe_barang = data['tipe_barang'];
-        this.jumlah = data['jml'];
-        this.isactive = data['isactive'];
+        this.role = data['level'];
+        this.username = data['username'];
+        this.full_name = data['full_name'];
+        this.cabang = data['branch_id'];
+        this.isactive = data['status_user'];
 
         this.showList = true;
 
@@ -114,7 +107,7 @@ export class ModalbarangPage implements OnInit {
   }
 
   //promise
-  getTipe() {
+  getCabang() {
     return new Promise(resolve => {
       let headers = new HttpHeaders();
       headers.append('Content-Type', 'application/json');
@@ -123,7 +116,31 @@ export class ModalbarangPage implements OnInit {
       let where = "";
       let arrdata = {
         "action": "arraytable",
-        "table": "m_tipe",
+        "table": "m_branch",
+        "limit": "",
+        "order": "", 
+        "where": where
+      };
+
+      this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          console.log(error);
+        })
+    })
+  }
+
+  getRole() {
+    return new Promise(resolve => {
+      let headers = new HttpHeaders();
+      headers.append('Content-Type', 'application/json');
+      headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+      let where = "";
+      let arrdata = {
+        "action": "arraytable",
+        "table": "m_level",
         "limit": "",
         "order": "", 
         "where": where
@@ -144,16 +161,6 @@ export class ModalbarangPage implements OnInit {
       "bb": "bb"
     }
     this.modalCtrl.dismiss(datatest);
-  }
-
-  getScan() {
-    this.barcodeCtrl.scan().then(barcodeData => {
-      if (barcodeData) {
-        this.kode = barcodeData.text;
-      }
-    }).catch(err => {
-      console.log('Error', err);
-    });
   }
 
   async saveForm(){
@@ -180,34 +187,84 @@ export class ModalbarangPage implements OnInit {
     await alert.present();
   }
 
+  getHas1(){
+    return new Promise(resolve => {
+      let headers = new HttpHeaders();
+      headers.append('Content-Type', 'application/json');
+      headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+      let where = "";
+      let arrdata = {
+        "action": "sha1",
+        "table": this.password,
+        "limit": "",
+        "order": "", 
+        "where": where
+      };
+
+      this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          console.log(error);
+        })
+    })
+  }
+
   async saveFormCommit() {
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
       message: 'Please wait...',
     });
     await loading.present();
-
+    if(this.password != null){
+      if(this.username == null || this.role == null || this.full_name == null || this.cabang == null){
+        this.showTost('Lengkapi data');
+        loading.dismiss();
+        return false;
+      }
+      this.password = await this.getHas1();
+      this.arrdata = {
+        "action": this.action,
+        "table": "m_user",
+        "data": {
+          "username": this.username,
+          "status_user": this.isactive,
+          "full_name": this.full_name,
+          "level": this.role,
+          "branch_id": this.cabang,
+          "password" : this.password
+        },
+        "except":"",
+        "where": {"id":this.passId}
+      };
+    }else{
+      if(this.username == null || this.role == null || this.full_name == null || this.cabang == null){
+        this.showTost('Lengkapi data');
+        loading.dismiss();
+        return false;
+      }
+      this.arrdata = {
+        "action": this.action,
+        "table": "m_user",
+        "data": {
+          "username": this.username,
+          "status_user": this.isactive,
+          "full_name": this.full_name,
+          "level": this.role,
+          "branch_id": this.cabang
+        },
+        "except":"",
+        "where": {"id":this.passId}
+      };
+    }
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     
-    let arrdata = {
-      "action": this.action,
-      "table": "m_barang",
-      "data": {
-        "code": this.kode,
-        "isactive": this.isactive,
-        "jml": this.jumlah,
-        "nama_barang": this.nama_barang,
-        "tipe_barang": this.tipe_barang,
-        "branch_id": this.branch_id
-      },
-      "except":"",
-      "where": {"id":this.passId}
-    };
-    console.log(arrdata);
-    this.tipe_barang = '';
-    this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
+    
+    console.log(this.arrdata);
+    this.http.post(api_base_url + 'api/v2/postdata', this.arrdata, { headers: headers })
       .subscribe(data => {
         console.log(data);  
         loading.dismiss();

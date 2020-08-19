@@ -63,6 +63,26 @@ const routes: Routes = [
     path: 'daftarbarang',
     loadChildren: () => import('./page/daftarbarang/daftarbarang.module').then( m => m.DaftarbarangPageModule)
   },
+  {
+    path: 'payment',
+    loadChildren: () => import('./page/payment/payment.module').then( m => m.PaymentPageModule)
+  },
+  {
+    path: 'listcabang',
+    loadChildren: () => import('./page/listcabang/listcabang.module').then( m => m.ListcabangPageModule)
+  },
+  {
+    path: 'modalcabang',
+    loadChildren: () => import('./page/modalcabang/modalcabang.module').then( m => m.ModalcabangPageModule)
+  },
+  {
+    path: 'listuser',
+    loadChildren: () => import('./page/listuser/listuser.module').then( m => m.ListuserPageModule)
+  },
+  {
+    path: 'modaluser',
+    loadChildren: () => import('./page/modaluser/modaluser.module').then( m => m.ModaluserPageModule)
+  },
 ];
 
 @NgModule({ 

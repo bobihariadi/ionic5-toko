@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonInfiniteScroll, ModalController, AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { ModalController, AlertController, LoadingController, ToastController, IonInfiniteScroll } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ModalhargaPage } from '../modalharga/modalharga.page';
 import { api_base_url } from 'src/config';
+import { ModalcabangPage } from '../modalcabang/modalcabang.page';
 
 @Component({
-  selector: 'app-listharga',
-  templateUrl: './listharga.page.html',
-  styleUrls: ['./listharga.page.scss'],
+  selector: 'app-listcabang',
+  templateUrl: './listcabang.page.html',
+  styleUrls: ['./listcabang.page.scss'],
 })
-export class ListhargaPage implements OnInit {
+export class ListcabangPage implements OnInit {
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
   fakeList: Array<any> = new Array(7);
@@ -19,13 +19,10 @@ export class ListhargaPage implements OnInit {
   arrList: any = []
   jwt: any
   page: number = 0
-  limit: number = 10
+  limit: number = 5
   totalRow: number = 0
   arrdata: any = []
   searchTerm: string = "";
-  role: any
-  isAdministrator: any = false
-
   constructor(
     private modalCtrl: ModalController,
     private router: Router,
@@ -40,28 +37,21 @@ export class ListhargaPage implements OnInit {
         this.router.navigate(['login'], { replaceUrl: true });
       }
     });
-  }
+   }
 
   ngOnInit() {
     this.storageCtrl.get('dataLogin').then((data) => {
       this.jwt = data[0].jwt;
-      this.role = data[0].level;
-      if(this.role == '1'){
-        this.isAdministrator = true;
-      }
       this.getData();
     });
   }
 
-  async presentModal(pId,tBeli,code,nama,pAct) {
+  async presentModal(pId,pAct) {
     const modal = await this.modalCtrl.create({
-      component: ModalhargaPage,
+      component: ModalcabangPage,
       cssClass: 'my-custom-class',
       componentProps:{
-        id_barang:pId,
-        tipe_beli:tBeli,
-        code_barang:code,
-        nama_barang:nama,
+        pass_id:pId,
         action:pAct
       }
     });
@@ -73,7 +63,7 @@ export class ListhargaPage implements OnInit {
     return await modal.present();
   }
 
-  async confimData(param1,param2) {
+  async confimData(param) {
     const alert = await this.alerCtrl.create({
       cssClass: 'my-custom-class',
       header: 'Confirm!',
@@ -88,7 +78,7 @@ export class ListhargaPage implements OnInit {
         }, {
           text: 'Yes',
           handler: () => {
-            this.delData(param1,param2);
+            this.delData(param);
           }
         }
       ]
@@ -97,7 +87,7 @@ export class ListhargaPage implements OnInit {
     await alert.present();
   }
 
-  async delData(id,tipe){
+  async delData(id){
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
       message: 'Please wait...',
@@ -110,10 +100,10 @@ export class ListhargaPage implements OnInit {
     
     let arrdata = {
       "action": "Del",
-      "table": "m_harga",
+      "table": "m_branch",
       "data": "",
       "except":"",
-      "where": {"id_barang":id, "tipe_beli":tipe}
+      "where": {"branch_id":id}
     };
 
     this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
@@ -144,13 +134,13 @@ export class ListhargaPage implements OnInit {
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     let where = '';
     if (this.searchTerm != "") {
-      where = "where b.nama_barang like '%" + this.searchTerm + "%'";
+      where = "where branch_name like '%" + this.searchTerm + "%'";
     }
     let arrdata = {
-      "action": "listharga",
-      "table": "",
+      "action": "arraytable",
+      "table": "m_branch",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by b.nama_barang desc",
+      "order": "order by branch_name desc",
       "where": where
     };
 
@@ -188,14 +178,14 @@ export class ListhargaPage implements OnInit {
 
     let where = '';
     if (this.searchTerm != "") {
-      where = "where b.nama_barang like '%" + this.searchTerm + "%'";
+      where = "where branch_name like '%" + this.searchTerm + "%'";
     }
 
     let arrdata = {
-      "action": "listharga",
-      "table": "",
+      "action": "arraytable",
+      "table": "m_branch",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by b.nama_barang desc",
+      "order": "order by branch_name desc",
       "where": where
     };
 
