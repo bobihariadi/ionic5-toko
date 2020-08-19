@@ -69,7 +69,7 @@ export class TransaksiPage implements OnInit {
       let startDate = format(parseISO(this.startDate),'yyyyMMdd');
       addWhere = " and a.create_date >= date_format('"+startDate+"','%Y%m%d') ";
     }else if(this.startDate == null && this.endDate !=null){
-      let startDate = format(parseISO(this.endDate),'yyyyMMdd');
+      let endDate = format(parseISO(this.endDate),'yyyyMMdd');
       addWhere = " and a.create_date <= date_format('"+endDate+"','%Y%m%d') ";
     }
 
