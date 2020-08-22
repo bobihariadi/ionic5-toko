@@ -24,6 +24,8 @@ export class ModalhargaPage implements OnInit {
   showList: boolean = false;
   harga: number
   arrdata:any
+  arrCabang: any
+  branch_id: string
 
   tipe_barang: any
   jumlah: number
@@ -67,9 +69,11 @@ export class ModalhargaPage implements OnInit {
     this.storageCtrl.get('dataLogin').then(async (data) => {
       this.jwt = data[0].jwt;
       this.user_id = data[0].id;
+      this.branch_id = data[0].branch_id;
       if (this.action == 'Edit') {
         this.getData();
       } else {
+        this.arrCabang = await this.getCabang();
         this.showList = true;
       }
     });
@@ -83,7 +87,8 @@ export class ModalhargaPage implements OnInit {
     }
   }
 
- getData() {
+ async getData() {
+    this.arrCabang = await this.getCabang();
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
@@ -107,6 +112,30 @@ export class ModalhargaPage implements OnInit {
       }, error => {
         console.log(error);
       })
+  }
+
+  getCabang() {
+    return new Promise(resolve => {
+      let headers = new HttpHeaders();
+      headers.append('Content-Type', 'application/json');
+      headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+      let where = "";
+      let arrdata = {
+        "action": "arraytable",
+        "table": "m_branch",
+        "limit": "",
+        "order": "", 
+        "where": where
+      };
+
+      this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          console.log(error);
+        })
+    })
   }
 
   closeModal() {
@@ -165,8 +194,9 @@ export class ModalhargaPage implements OnInit {
         "action": this.action,
         "table": "m_harga",
         "data": {
-          "harga": this.harga,
-          "jml": this.jumlah        },
+          "harga": this.harga
+          // "jml": this.jumlah
+                },
         "except":"",
         "where": {"id_barang":this.id_barang, "tipe_beli":this.tipe_beli}
       };
@@ -178,7 +208,8 @@ export class ModalhargaPage implements OnInit {
           "harga": this.harga,
           "jml": this.jumlah,
           "id_barang": this.id_barang,
-          "tipe_beli": this.tipe_beli
+          "tipe_beli": this.tipe_beli,
+          "branch_id": this.branch_id
         },
         "except":"",
         "where": ""

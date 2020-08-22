@@ -24,7 +24,9 @@ export class ListhargaPage implements OnInit {
   arrdata: any = []
   searchTerm: string = "";
   role: any
+  branch_id: any
   isAdministrator: any = false
+  arrCabang: any
 
   constructor(
     private modalCtrl: ModalController,
@@ -46,6 +48,7 @@ export class ListhargaPage implements OnInit {
     this.storageCtrl.get('dataLogin').then((data) => {
       this.jwt = data[0].jwt;
       this.role = data[0].level;
+      this.branch_id = data[0].branch_id;
       if(this.role == '1'){
         this.isAdministrator = true;
       }
@@ -68,6 +71,7 @@ export class ListhargaPage implements OnInit {
 
     modal.onDidDismiss().then((r) => {
       // console.log(r);
+      this.page = 0;
       this.getData();
     });
     return await modal.present();
@@ -138,13 +142,19 @@ export class ListhargaPage implements OnInit {
     toast.present();
   }
 
-  getData(event?) {
+  async getData(event?) {
+    this.arrCabang = await this.getCabang();
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = '';
+    let where = 'where 1=1 ';
+    
+    if(this.branch_id != ""){
+      where = where+ ' and b.branch_id ='+this.branch_id;
+    }
+
     if (this.searchTerm != "") {
-      where = "where b.nama_barang like '%" + this.searchTerm + "%'";
+      where = where+" and b.nama_barang like '%" + this.searchTerm + "%'";
     }
     let arrdata = {
       "action": "listharga",
@@ -186,9 +196,12 @@ export class ListhargaPage implements OnInit {
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
 
-    let where = '';
+    let where = 'where 1=1 ';
+    if(this.branch_id != ""){
+      where = where+ ' and b.branch_id ='+this.branch_id;
+    }
     if (this.searchTerm != "") {
-      where = "where b.nama_barang like '%" + this.searchTerm + "%'";
+      where = where+" and b.nama_barang like '%" + this.searchTerm + "%'";
     }
 
     let arrdata = {
@@ -231,6 +244,36 @@ export class ListhargaPage implements OnInit {
     this.searchTerm = val;
     this.page = 0;
     this.getData();
+  }
+
+  actCabang(e:any){
+    this.branch_id = e.target.value;
+    this.page = 0;
+    this.getData();
+  }
+
+  getCabang() {
+    return new Promise(resolve => {
+      let headers = new HttpHeaders();
+      headers.append('Content-Type', 'application/json');
+      headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+      let where = "";
+      let arrdata = {
+        "action": "arraytable",
+        "table": "m_branch",
+        "limit": "",
+        "order": "", 
+        "where": where
+      };
+
+      this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          console.log(error);
+        })
+    })
   }
 
 }

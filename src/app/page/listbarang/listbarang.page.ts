@@ -26,6 +26,7 @@ export class ListbarangPage implements OnInit {
   branch_id: any
   role: any
   isAdministrator: any = false
+  arrCabang: any
 
   constructor(
     private modalCtrl: ModalController,
@@ -67,6 +68,7 @@ export class ListbarangPage implements OnInit {
 
     modal.onDidDismiss().then((r) => {
       // console.log(r);
+      this.page = 0;
       this.getData();
     });
     return await modal.present();
@@ -137,13 +139,14 @@ export class ListbarangPage implements OnInit {
     toast.present();
   }
 
-  getData(event?) {
+  async getData(event?) {
+    this.arrCabang = await this.getCabang();
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     let where = 'where 1=1 ';
     
-    if(this.role != '1'){
+    if(this.branch_id != ""){
       where = where+ ' and a.branch_id ='+this.branch_id;
     }
 
@@ -154,7 +157,7 @@ export class ListbarangPage implements OnInit {
       "action": "listbarang",
       "table": "",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by id desc",
+      "order": "order by a.nama_barang asc",
       "where": where
     };
 
@@ -191,20 +194,20 @@ export class ListbarangPage implements OnInit {
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
 
     let where = 'where 1=1 ';
-    
-    if(this.role != '1'){
+
+    if(this.branch_id != ""){
       where = where+ ' and a.branch_id ='+this.branch_id;
     }
 
     if (this.searchTerm != "") {
-      where = " and a.nama_barang like '%" + this.searchTerm + "%'";
+      where = where+" and a.nama_barang like '%" + this.searchTerm + "%'";
     }
 
     let arrdata = {
       "action": "listbarang",
       "table": "",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by id desc",
+      "order": "order by a.nama_barang asc",
       "where": where
     };
 
@@ -241,4 +244,36 @@ export class ListbarangPage implements OnInit {
     this.page = 0;
     this.getData();
   }
+
+  actCabang(e:any){
+    this.branch_id = e.target.value;
+    console.log(this.branch_id);
+    this.page = 0;
+    this.getData();
+  }
+
+  getCabang() {
+    return new Promise(resolve => {
+      let headers = new HttpHeaders();
+      headers.append('Content-Type', 'application/json');
+      headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+      let where = "";
+      let arrdata = {
+        "action": "arraytable",
+        "table": "m_branch",
+        "limit": "",
+        "order": "", 
+        "where": where
+      };
+
+      this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          console.log(error);
+        })
+    })
+  }
+
 }

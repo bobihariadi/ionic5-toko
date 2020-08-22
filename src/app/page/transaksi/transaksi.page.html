@@ -21,6 +21,7 @@
       <ion-item>
         <ion-label position="floating">Cabang</ion-label>
         <ion-select [(ngModel)]="branch_id" (ionChange)="actCabang($event)">
+          <ion-select-option type="text" value="" >Semua</ion-select-option>
           <ion-select-option type="text" *ngFor="let item of arrCabang" value="{{item.branch_id}}">{{item.branch_name}}
           </ion-select-option>
         </ion-select>
@@ -31,7 +32,7 @@
         <ion-col size="6">
           <ion-item>
             <ion-label position="floating">Tanggal Awal</ion-label>
-            <ion-datetime displayFormat="DD-MM-YYYY"   placeholder="Pilih Tanggal" [(ngModel)]="startDate" (ionCancel)="clearTgl('startDate')"  (ionChange)="getDataChange()" ></ion-datetime>
+            <ion-datetime displayFormat="DD-MM-YYYY"  placeholder="Pilih Tanggal" [(ngModel)]="startDate" (ionCancel)="clearTgl('startDate')"  (ionChange)="getDataChange()" ></ion-datetime>
           </ion-item>
         </ion-col>
         <ion-col size="6">
@@ -53,6 +54,7 @@
           <p>harga : {{list.harga}}</p>
           <p>Jumlah : {{list.jml}}</p>
           <p>Total : <b>{{list.total}}</b></p>
+          <p>Cabang : {{list.branch_name}}</p>
         </ion-label>
       </ion-item>
     </ion-list>

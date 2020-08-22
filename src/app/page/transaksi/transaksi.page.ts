@@ -27,7 +27,7 @@ export class TransaksiPage implements OnInit {
   isAdministrator: any = false
   arrCabang: any
   branch_id: any
-  startDate: any
+  startDate: any=new Date().toISOString(); 
   endDate: any
 
   constructor(
@@ -61,6 +61,7 @@ export class TransaksiPage implements OnInit {
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     let addWhere = '';
+    console.log(this.startDate);
     if(this.startDate != null && this.endDate !=null){
       let startDate = format(parseISO(this.startDate),'yyyyMMdd');
       let endDate = format(parseISO(this.endDate),'yyyyMMdd');
@@ -73,7 +74,11 @@ export class TransaksiPage implements OnInit {
       addWhere = " and a.create_date <= date_format('"+endDate+"','%Y%m%d') ";
     }
 
-    let where = 'where a.branch_id ='+this.branch_id; 
+    let where = 'where 1=1 ';
+    
+    if(this.branch_id != ""){
+      where = where+ ' and b.branch_id ='+this.branch_id;
+    }
     if(this.searchTerm !=""){
       where = "where b.nama_barang like '%" + this.searchTerm + "%' and a.branch_id = "+this.branch_id;
     }
@@ -92,11 +97,11 @@ export class TransaksiPage implements OnInit {
           this.arrList = [];
         }else{
           this.infiniteScroll.disabled = false;
-          this.showList = true;
           this.totalRow = data[0].total_row;
           if (event) {
             event.target.complete();
           }
+          this.showList = true;
         }
       }, error => {
         console.log(error);
@@ -105,8 +110,8 @@ export class TransaksiPage implements OnInit {
 
   refreshData(event) {
     this.page = 0;
-    this.showList = false;
     this.searchTerm = '';
+    this.showList = false;
     event.target.disabled = false;
     this.getData(event);
     event.target.disabled = false;
@@ -117,7 +122,24 @@ export class TransaksiPage implements OnInit {
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     
-    let where = 'where a.branch_id ='+this.branch_id;
+    let addWhere = '';
+    if(this.startDate != null && this.endDate !=null){
+      let startDate = format(parseISO(this.startDate),'yyyyMMdd');
+      let endDate = format(parseISO(this.endDate),'yyyyMMdd');
+      addWhere = " and (a.create_date BETWEEN date_format('"+startDate+"','%Y%m%d') and DATE_ADD(date_format('"+endDate+"','%Y%m%d'), INTERVAL 1 DAY)) ";
+    }else if(this.startDate != null && this.endDate ==null){
+      let startDate = format(parseISO(this.startDate),'yyyyMMdd');
+      addWhere = " and a.create_date >= date_format('"+startDate+"','%Y%m%d') ";
+    }else if(this.startDate == null && this.endDate !=null){
+      let endDate = format(parseISO(this.endDate),'yyyyMMdd');
+      addWhere = " and a.create_date <= date_format('"+endDate+"','%Y%m%d') ";
+    }
+    
+    let where = 'where 1=1 ';
+    
+    if(this.branch_id != ""){
+      where = where+ ' and b.branch_id ='+this.branch_id;
+    }
     if(this.searchTerm !=""){
       where = "where b.nama_barang like '%" + this.searchTerm + "%' and a.branch_id = "+this.branch_id;
     }
@@ -150,15 +172,16 @@ export class TransaksiPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.storageCtrl.get('dataLogin').then((data) => {
+   ngOnInit() {    
+    this.storageCtrl.get('dataLogin').then(async (data) => {
       this.jwt = data[0].jwt;
       this.role = data[0].level;
       this.branch_id = data[0].branch_id;
       if(this.role == '1'){
         this.isAdministrator = true;
       }
-      this.getData();
+      await this.getData();
+      this.showList = true;
     });
   }
 

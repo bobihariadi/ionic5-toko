@@ -68,9 +68,9 @@ export class ModaluserPage implements OnInit {
       if (this.action == 'Edit') {
         this.getData();
       } else {
-        this.showList = true;
         this.arrCabang = await this.getCabang();
         this.arrRole = await this.getRole();
+        this.showList = true;
       }
     });
   }

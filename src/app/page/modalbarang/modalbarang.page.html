@@ -32,6 +32,16 @@
       <ion-input type="number" [(ngModel)]="jumlah" autocomplete="off" ></ion-input>
     </ion-item>
     <ion-item >
+      <ion-label position="floating" >Lokasi Stok</ion-label>
+      <ion-input type="text" [(ngModel)]="lokasi" autocomplete="off" ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating" >Cabang</ion-label>
+      <ion-select [(ngModel)]="branch_id" disabled="{{isdisabled}}" >
+        <ion-select-option type="text" *ngFor="let items of arrCabang" value="{{items.branch_id}}">{{items.branch_name}}</ion-select-option>
+      </ion-select>
+    </ion-item> 
+    <ion-item >
       <ion-label position="floating">Aktif</ion-label>
       <ion-select [(ngModel)]="isactive" >
         <ion-select-option  type="text" *ngFor="let item of listActive" value="{{item.val}}">{{item.valdesc}}</ion-select-option>        

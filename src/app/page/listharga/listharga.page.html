@@ -22,13 +22,24 @@
     </div>
   </div>
   <div class="ion-padding scroll-content" *ngIf="showList">
+    <div class="branch" *ngIf="isAdministrator">
+      <ion-item>
+        <ion-label position="floating">Cabang</ion-label>
+        <ion-select [(ngModel)]="branch_id" (ionChange)="actCabang($event)">
+          <ion-select-option type="text" value="" >Semua</ion-select-option>
+          <ion-select-option type="text" *ngFor="let item of arrCabang" value="{{item.branch_id}}">{{item.branch_name}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>      
+    </div>
     <ion-searchbar expand="full" [(ngModel)]="searchTerm" (ionChange)="setFilteredItems($event)" (ionClear)="cleared($event)" ></ion-searchbar>
     <ion-list>
       <ion-item *ngFor="let list of arrList">
         <ion-label> 
-          <p><b>{{list['nama_barang']}}</b></p>
-          <p>tipe barang : {{list['tipe_beli_desc']}}</p>
-          <p>harga : {{list['harga_format']}}</p>
+          <p><b>{{list.code}} | {{list.nama_barang}}</b></p>
+          <p>tipe barang : <b>{{list.tipe_beli_desc}}</b></p>
+          <p>harga : <b>{{list.harga_format}}</b></p>
+          <p>Cabang : {{list.branch_name}}</p>
         </ion-label>
         <ion-icon name="pencil-outline" size="small" slot="end" (click)="presentModal(list.id_barang, list.tipe_beli,list.code,list.nama_barang, 'Edit')" *ngIf="isAdministrator" ></ion-icon>
         <ion-icon name="close-outline" size="medium" slot="end" (click)="confimData(list.id_barang, list.tipe_beli)" *ngIf="isAdministrator" ></ion-icon>

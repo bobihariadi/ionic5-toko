@@ -18,17 +18,20 @@ export class ModalbarangPage implements OnInit {
   jwt: any
   arrList: any
   arrTipe: any
+  arrCabang: any
   fakeList: Array<any> = new Array(4);
   showList: boolean = false;
   id: number
+  lokasi: any
 
   kode: any
   nama_barang: any
   tipe_barang: any
   jumlah: number
   isactive: string = "Y"
-  branch_id: any
+  branch_id: number = 1 
   role: any
+  isdisabled: any = true
   listActive: any[] = [
     {
       'val': 'Y',
@@ -56,10 +59,13 @@ export class ModalbarangPage implements OnInit {
         this.router.navigate(['login'], { replaceUrl: true });
       }
     });
-    this.storageCtrl.get('dataLogin').then((data) => {
+    this.storageCtrl.get('dataLogin').then(async (data) => {
       this.jwt = data[0].jwt;
       this.branch_id = data[0].branch_id;
       this.role = data[0].level;
+      if(this.role == '1'){
+        this.isdisabled = false;
+      }
     });
   }
 
@@ -67,19 +73,21 @@ export class ModalbarangPage implements OnInit {
     this.passId = this.navParams.get('pass_id');
     this.action = this.navParams.get('action');
     this.storageCtrl.get('dataLogin').then(async (data) => {
+      this.branch_id = await data[0].branch_id;
       this.jwt = data[0].jwt;
-
       if (this.action == 'Edit') {
         this.getData();
       } else {
-        this.showList = true;
         this.arrTipe = await this.getTipe();
+        this.arrCabang = await this.getCabang();
+        this.showList = true;
       }
     });
   }
 
   async getData() {
     this.arrTipe = await this.getTipe();
+    this.arrCabang = await this.getCabang();
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
@@ -104,6 +112,7 @@ export class ModalbarangPage implements OnInit {
         this.nama_barang = data['nama_barang'];
         this.tipe_barang = data['tipe_barang'];
         this.jumlah = data['jml'];
+        this.lokasi = data['lokasi'];
         this.isactive = data['isactive'];
 
         this.showList = true;
@@ -124,6 +133,30 @@ export class ModalbarangPage implements OnInit {
       let arrdata = {
         "action": "arraytable",
         "table": "m_tipe",
+        "limit": "",
+        "order": "", 
+        "where": where
+      };
+
+      this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          console.log(error);
+        })
+    })
+  }
+
+  getCabang() {
+    return new Promise(resolve => {
+      let headers = new HttpHeaders();
+      headers.append('Content-Type', 'application/json');
+      headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+      let where = "";
+      let arrdata = {
+        "action": "arraytable",
+        "table": "m_branch",
         "limit": "",
         "order": "", 
         "where": where
@@ -200,7 +233,8 @@ export class ModalbarangPage implements OnInit {
         "jml": this.jumlah,
         "nama_barang": this.nama_barang,
         "tipe_barang": this.tipe_barang,
-        "branch_id": this.branch_id
+        "branch_id": this.branch_id,
+        "lokasi": this.lokasi
       },
       "except":"",
       "where": {"id":this.passId}
