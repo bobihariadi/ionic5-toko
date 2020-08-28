@@ -61,7 +61,6 @@ export class TransaksiPage implements OnInit {
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     let addWhere = '';
-    console.log(this.startDate);
     if(this.startDate != null && this.endDate !=null){
       let startDate = format(parseISO(this.startDate),'yyyyMMdd');
       let endDate = format(parseISO(this.endDate),'yyyyMMdd');
@@ -71,37 +70,39 @@ export class TransaksiPage implements OnInit {
       addWhere = " and a.create_date >= date_format('"+startDate+"','%Y%m%d') ";
     }else if(this.startDate == null && this.endDate !=null){
       let endDate = format(parseISO(this.endDate),'yyyyMMdd');
-      addWhere = " and a.create_date <= date_format('"+endDate+"','%Y%m%d') ";
+      addWhere = " and a.create_date <= DATE_ADD(date_format('"+endDate+"','%Y%m%d'), INTERVAL 1 DAY) ";
     }
 
     let where = 'where 1=1 ';
     
     if(this.branch_id != ""){
-      where = where+ ' and b.branch_id ='+this.branch_id;
+      where = where+ ' and a.branch_id ='+this.branch_id;
     }
     if(this.searchTerm !=""){
-      where = "where b.nama_barang like '%" + this.searchTerm + "%' and a.branch_id = "+this.branch_id;
+      where = "where (b.nama_barang like '%" + this.searchTerm + "%' or a.batch like '%" + this.searchTerm + "%' ) and a.branch_id = "+this.branch_id;
     }
     let arrdata = {
       "action": "listtransaksi",
       "table": "",
       "limit": "Limit " + this.page + "," + this.limit,
-      "order": "order by id desc",
+      "order": "order by a.id desc",
       "where": where+addWhere
     };
 
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
       .subscribe(data => {
+        this.arrList = [];
         this.arrList = data;
+        if (event) {
+          event.target.complete();
+        }
+        this.showList = true;
+
         if(!this.arrList.length){
           this.arrList = [];
         }else{
           this.infiniteScroll.disabled = false;
           this.totalRow = data[0].total_row;
-          if (event) {
-            event.target.complete();
-          }
-          this.showList = true;
         }
       }, error => {
         console.log(error);
@@ -132,16 +133,16 @@ export class TransaksiPage implements OnInit {
       addWhere = " and a.create_date >= date_format('"+startDate+"','%Y%m%d') ";
     }else if(this.startDate == null && this.endDate !=null){
       let endDate = format(parseISO(this.endDate),'yyyyMMdd');
-      addWhere = " and a.create_date <= date_format('"+endDate+"','%Y%m%d') ";
+      addWhere = " and a.create_date <= DATE_ADD(date_format('"+endDate+"','%Y%m%d'), INTERVAL 1 DAY) ";
     }
     
     let where = 'where 1=1 ';
     
     if(this.branch_id != ""){
-      where = where+ ' and b.branch_id ='+this.branch_id;
+      where = where+ ' and a.branch_id ='+this.branch_id;
     }
     if(this.searchTerm !=""){
-      where = "where b.nama_barang like '%" + this.searchTerm + "%' and a.branch_id = "+this.branch_id;
+      where = "where (b.nama_barang like '%" + this.searchTerm + "%' or a.batch like '%" + this.searchTerm + "%' ) and a.branch_id = "+this.branch_id;
     }
 
     let arrdata = {
@@ -149,7 +150,7 @@ export class TransaksiPage implements OnInit {
       "table": "",
       "limit": "Limit " + this.page + "," + this.limit,
       "order": "order by id desc",
-      "where": where
+      "where": where+addWhere
     };
 
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })

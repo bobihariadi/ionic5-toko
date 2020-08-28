@@ -83,6 +83,10 @@ const routes: Routes = [
     path: 'modaluser',
     loadChildren: () => import('./page/modaluser/modaluser.module').then( m => m.ModaluserPageModule)
   },
+  {
+    path: 'listprinter',
+    loadChildren: () => import('./page/listprinter/listprinter.module').then( m => m.ListprinterPageModule)
+  },
 ];
 
 @NgModule({ 

@@ -61,6 +61,12 @@
       <ion-item>
         <ion-label class="ion-text-wrap">Kode Barang: {{item.tmp_code}}</ion-label>
       </ion-item>
+      <ion-item *ngIf="item.tmp_tipe_beli =='G'">
+        <ion-label class="ion-text-wrap">Tipe Beli: Grosir</ion-label>
+      </ion-item>
+      <ion-item *ngIf="item.tmp_tipe_beli =='E'">
+        <ion-label class="ion-text-wrap">Tipe Beli: Eceran</ion-label>
+      </ion-item>
       <ion-item >
         <ion-label slot="start">{{item.tmp_jml}} X {{item.tmp_harga_real}}</ion-label>
         <ion-label class="rata_kanan"><b>{{item.tmp_total_real}}</b></ion-label>

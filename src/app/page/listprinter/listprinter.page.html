@@ -1,0 +1,34 @@
+<ion-header >
+  <ion-toolbar >
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title slot="end" >Printer</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <div class="login-header">
+    <div class="login-header-icon">
+      <img src="assets/img/bg-header.jpg" >
+      <ion-text class="header-text">
+      </ion-text>
+    </div>
+  </div>
+  <div class="ion-padding scroll-content" >
+    <ion-list>
+      <ion-item>
+        <ion-label>Selected Printer</ion-label>
+        <ion-select [(ngModel)]="selectedPrinter" (ionChange)="selectPrinter($event)" >
+          <ion-select-option *ngFor="let item of bluetoothList"  value="{{item.id}}" >{{item.name}} {{item.id}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      </ion-list>
+  </div>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-toolbar>
+    <ion-button expand="full"  size="large"  (click)="printStuff()"  >
+      Test Print</ion-button>
+  </ion-toolbar>
+</ion-footer>

@@ -49,20 +49,20 @@ export class ListbarangPage implements OnInit {
       this.jwt = data[0].jwt;
       this.branch_id = data[0].branch_id;
       this.role = data[0].level;
-      if(this.role == '1'){
+      if (this.role == '1') {
         this.isAdministrator = true;
       }
       this.getData();
     });
   }
 
-  async presentModal(pId,pAct) {
+  async presentModal(pId, pAct) {
     const modal = await this.modalCtrl.create({
       component: ModalbarangPage,
       cssClass: 'my-custom-class',
-      componentProps:{
-        pass_id:pId,
-        action:pAct
+      componentProps: {
+        pass_id: pId,
+        action: pAct
       }
     });
 
@@ -98,7 +98,7 @@ export class ListbarangPage implements OnInit {
     await alert.present();
   }
 
-  async delData(id){
+  async delData(id) {
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
       message: 'Please wait...',
@@ -108,18 +108,18 @@ export class ListbarangPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    
+
     let arrdata = {
       "action": "Del",
       "table": "m_barang",
       "data": "",
-      "except":"",
-      "where": {"id":id}
+      "except": "",
+      "where": { "id": id }
     };
 
     this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
       .subscribe(data => {
-        console.log(data);  
+        this.page = 0;
         this.getData();
         loading.dismiss();
         this.showTost('Deleted');
@@ -140,18 +140,19 @@ export class ListbarangPage implements OnInit {
   }
 
   async getData(event?) {
+    console.log(event);
     this.arrCabang = await this.getCabang();
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     let where = 'where 1=1 ';
-    
-    if(this.branch_id != ""){
-      where = where+ ' and a.branch_id ='+this.branch_id;
+
+    if (this.branch_id != "") {
+      where = where + ' and a.branch_id =' + this.branch_id;
     }
 
     if (this.searchTerm != "") {
-      where = where+" and a.nama_barang like '%" + this.searchTerm + "%'";
+      where = where + " and a.nama_barang like '%" + this.searchTerm + "%'";
     }
     let arrdata = {
       "action": "listbarang",
@@ -164,15 +165,16 @@ export class ListbarangPage implements OnInit {
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
       .subscribe(data => {
         this.arrList = data;
+        if (event) {
+          event.target.complete();
+        }
+        this.showList = true;
+
         if (!this.arrList.length) {
           this.arrList = [];
         } else {
           this.infiniteScroll.disabled = false;
-          this.showList = true;
           this.totalRow = data[0].total_row;
-          if (event) {
-            event.target.complete();
-          }
         }
       }, error => {
         console.log(error);
@@ -195,12 +197,12 @@ export class ListbarangPage implements OnInit {
 
     let where = 'where 1=1 ';
 
-    if(this.branch_id != ""){
-      where = where+ ' and a.branch_id ='+this.branch_id;
+    if (this.branch_id != "") {
+      where = where + ' and a.branch_id =' + this.branch_id;
     }
 
     if (this.searchTerm != "") {
-      where = where+" and a.nama_barang like '%" + this.searchTerm + "%'";
+      where = where + " and a.nama_barang like '%" + this.searchTerm + "%'";
     }
 
     let arrdata = {
@@ -245,7 +247,7 @@ export class ListbarangPage implements OnInit {
     this.getData();
   }
 
-  actCabang(e:any){
+  actCabang(e: any) {
     this.branch_id = e.target.value;
     console.log(this.branch_id);
     this.page = 0;
@@ -263,7 +265,7 @@ export class ListbarangPage implements OnInit {
         "action": "arraytable",
         "table": "m_branch",
         "limit": "",
-        "order": "", 
+        "order": "",
         "where": where
       };
 

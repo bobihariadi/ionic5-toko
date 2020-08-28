@@ -35,7 +35,8 @@
     <ion-searchbar expand="full" [(ngModel)]="searchTerm" (ionChange)="setFilteredItems($event)" (ionClear)="cleared($event)" ></ion-searchbar>
     <ion-list>
       <ion-item *ngFor="let list of arrList">
-        <ion-label> 
+        <ion-label class="ion-text-wrap copytext"> 
+          <p><b>{{list.code}}</b></p>
           <p><b>{{list.nama_barang}}</b></p>
           <p>tipe barang : {{list.deskripsi}}</p>
           <p>Jumlah : <b>{{list.jml}}</b></p>

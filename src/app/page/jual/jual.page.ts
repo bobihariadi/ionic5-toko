@@ -20,7 +20,7 @@ export class JualPage implements OnInit {
   jml: number = 1;
   sub_harga: any = 0
   nama: any
-  arrList:any
+  arrList:any = []
   arrBelanja:any = []
   arrReturn: any = []
   id_barang: any
@@ -100,6 +100,11 @@ export class JualPage implements OnInit {
   }
 
   async confirmBatal(){
+    if (!this.arrBelanja.length) {
+      this.showTost('Tidak ada barang belanjaan');
+      return false;
+    }
+    
     const alert = await this.alertCtrl.create({
       cssClass: 'my-custom-class',
       header: 'Pemberitahuan!',
@@ -123,6 +128,11 @@ export class JualPage implements OnInit {
   }
 
   async actBayar(){
+    if (!this.arrBelanja.length) {
+      this.showTost('Tidak ada barang belanjaan');
+      return false;
+    }
+
     const alert = await this.alertCtrl.create({
       cssClass: 'my-custom-class',
       header: 'Pemberitahuan!',
@@ -168,6 +178,7 @@ export class JualPage implements OnInit {
       .subscribe(data => {
         loading.dismiss();
         this.showTost('Berhasil dibatalkan');
+        this.storageCtrl.set('dataBatch', '');
         this.router.navigate(['home'], { replaceUrl: true });
       }, error => {
         loading.dismiss();
@@ -240,13 +251,13 @@ export class JualPage implements OnInit {
   async showTost(param) {
     let toast = await this.toastCtrl.create({
       message: param,
-      duration: 3000,
+      duration: 2000,
       position: "bottom"
     });
     toast.present();
   }
 
-  onChange(e){
+  onChange(e:any){
     this.tipe_beli = e.target.value;
     let tot = this.kode.length;
     if(tot <= 4){
@@ -281,9 +292,49 @@ export class JualPage implements OnInit {
       })
   }
 
-  actTambah(){
+  cekStock(){
+      return new Promise(resolve => {
+        let headers = new HttpHeaders();
+        headers.append('Content-Type', 'application/json');
+        headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+  
+        let where = "where id="+this.id_barang;
+        let arrdata = {
+          "action": "rowtable",
+          "table": "m_barang",
+          "limit": "",
+          "order": "",
+          "where": where
+        };
+  
+        this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+          .subscribe(data => {
+            let jumlah = parseInt(data['jml']) - this.jml;
+            let returnValue = false;
+            if(jumlah <=0 ){
+              returnValue = true;
+            }
+            if((this.tipe_beli =='G') && (parseInt(data['jml']) < (12*this.jml))){
+              returnValue = true;              
+            }
+
+            resolve(returnValue);
+          }, error => {
+            console.log(error);
+          })
+      })
+    
+  }
+
+  async actTambah(){
     if(this.sub_harga==0 || this.kode ==""){
       this.showTost('Data tidak lengkap');
+      return false;
+    }
+
+    let cek = await this.cekStock();
+    if(cek){
+      this.showTost('Stok tidak mencukupi');
       return false;
     }
 

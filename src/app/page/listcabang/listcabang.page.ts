@@ -108,7 +108,7 @@ export class ListcabangPage implements OnInit {
 
     this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
       .subscribe(data => {
-        console.log(data);  
+        this.page = 0; 
         this.getData();
         loading.dismiss();
         this.showTost('Deleted');
@@ -147,15 +147,16 @@ export class ListcabangPage implements OnInit {
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
       .subscribe(data => {
         this.arrList = data;
+        this.showList = true;
+        if (event) {
+          event.target.complete();
+        }
+
         if (!this.arrList.length) {
           this.arrList = [];
         } else {
           this.infiniteScroll.disabled = false;
-          this.showList = true;
           this.totalRow = data[0].total_row;
-          if (event) {
-            event.target.complete();
-          }
         }
       }, error => {
         console.log(error);

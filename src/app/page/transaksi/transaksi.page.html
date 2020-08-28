@@ -48,7 +48,8 @@
       <ion-item *ngFor="let list of arrList; let i = index">
         <ion-label>
           <p>No. {{i+1}}</p>
-          <p>{{list.nama_barang}}</p>
+          <p>Batch : <b>{{list.batch}}</b></p>
+          <p><b>{{list.nama_barang}}</b></p>
           <p>tipe barang : {{list.tipe_barang}}</p>
           <p>Tanggal : {{list.tgl}} &nbsp; jam : {{list.jam}}</p>
           <p>harga : {{list.harga}}</p>

@@ -47,3 +47,10 @@ ion-searchbar{
 .branch{
     margin-top: 10px;
 }
+
+.copytext{
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text; 
+}

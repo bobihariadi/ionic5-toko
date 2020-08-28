@@ -56,11 +56,10 @@ export class DaftarbarangPage implements OnInit {
     this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
       .subscribe(data => {
         this.arrList = data;
+        this.showList = true;
         if (!this.arrList.length) {
           this.arrList = [];
-        } else {
-          this.showList = true;
-        }
+        } 
       }, error => {
         console.log(error);
       })

@@ -19,6 +19,7 @@ export class ModaluserPage implements OnInit {
   arrRole: any
   fakeList: Array<any> = new Array(4);
   showList: boolean = false;
+  isDisabled: boolean = false;
   id: number
 
   password: any
@@ -66,6 +67,7 @@ export class ModaluserPage implements OnInit {
       this.jwt = data[0].jwt;
 
       if (this.action == 'Edit') {
+        this.isDisabled = true;
         this.getData();
       } else {
         this.arrCabang = await this.getCabang();

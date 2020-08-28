@@ -5,7 +5,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { api_base_url } from 'src/config';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PrintService } from 'src/app/service/print.service';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-payment',
@@ -24,14 +24,19 @@ export class PaymentPage implements OnInit {
   bayar: any
   bluetoothList:any=[];
   selectedPrinter:any;
+  branch_id: any
   hitung: any
+  arrdata: any=[]
+  isDisabled : boolean= false
   constructor(
     private storageCtrl: Storage,
     private router: Router,
     private statusBar: StatusBar,
     private http: HttpClient,
     private print: PrintService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private alerCtrl: AlertController,
+    private loadingCtrl: LoadingController
   ) {
     this.storageCtrl.get('isLogin').then((val) => {
       this.statusBar.styleBlackTranslucent();
@@ -47,11 +52,16 @@ export class PaymentPage implements OnInit {
     this.storageCtrl.get('dataLogin').then((data) => {
       this.jwt = data[0].jwt;
       this.user_id = data[0].id;
+      this.branch_id = data[0].branch_id;
     });
 
     this.storageCtrl.get('dataBatch').then((val) => {
       this.batch = val;
       this.getBelanja();
+    });
+
+    this.storageCtrl.get('printerConnected').then((val) => {
+      this.selectedPrinter = val;
     });
   }
 
@@ -102,29 +112,92 @@ export class PaymentPage implements OnInit {
     }
   }
 
-  actBayar() {
-    this.showTost('bayar klik.');
+  async actBayar() {
+    if(this.bayar == null ){
+      this.showTost('Masukkan jumlah bayar');
+      return false;
+    }else if (this.bayar < this.total){
+      this.showTost('Kurang bayar');
+      return false;
+    }
+    const alert = await this.alerCtrl.create({
+      cssClass: 'my-custom-class',
+      header: 'Confirm!',
+      message: 'Are you sure?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+          }
+        }, {
+          text: 'Yes',
+          handler: () => {
+            this.saveBayar();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
-  //This will list all of your bluetooth devices
-  listPrinter() {
-    this.print.searchBluetoothPrinter()
-      .then(resp => {
+  async saveBayar(){
+    const loading = await this.loadingCtrl.create({
+      cssClass: 'my-custom-class',
+      message: 'Please wait...',
+    });
+    await loading.present();
 
-        //List of bluetooth device list
-        this.bluetoothList = resp;
-      });
-  }
-  //This will store selected bluetooth device mac address
-  selectPrinter(macAddress) {
-    //Selected printer macAddress stored here
-    this.selectedPrinter = macAddress;
+    var headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+    this.arrdata = {
+      "action": "bayar",
+      "table": "tx_payment",
+      "data": {
+        "pay_batch": this.batch,
+        "branch_id": this.branch_id,
+        "pay_total": this.total,
+        "pay_bayar": this.bayar,
+        "pay_kembalian": this.kembalian,
+        "pay_create_by": this.user_id
+       },
+      "except":"",
+      "where": ""
+    };
+
+    this.http.post(api_base_url + 'api/v2/bayar', this.arrdata, { headers: headers })
+      .subscribe(data => {
+        console.log(data);        
+          loading.dismiss();
+          this.printStuff();
+          this.showTost('Success');
+          setTimeout(() => {
+            this.storageCtrl.set('dataBatch', '');
+            this.router.navigate(['home'], { replaceUrl: true });            
+          }, 3000);  
+      }, error => {
+        loading.dismiss();
+        this.showTost('Failed');
+        console.log(error);
+      })
+
   }
 
-   //This will print
-  printStuff() {
+
+  printStuff() {        
     //The text that you want to print
-    var myText = "Hello hello hello \n\n\n This is a test \n\n\n";
+    var myText = "<b>Hello hello hello</b>\n\n\n This is a test \n\n\n";
+
+    // "pay_batch": this.batch,
+    // "branch_id": this.branch_id,
+    // "pay_total": this.total,
+    // "pay_bayar": this.bayar,
+    // "pay_kembalian": this.kembalian,
+
     this.print.sendToBluetoothPrinter(this.selectedPrinter, myText);
   }
 
