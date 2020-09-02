@@ -72,7 +72,7 @@ export class AppComponent {
  
     this.oneSignal.endInit();
     this.oneSignal.getIds().then(identity => {     
-      this.storageCtrl.set('palyerId', identity.userId); 
+      this.storageCtrl.set('playerId', identity.userId); 
     });
   }
 
