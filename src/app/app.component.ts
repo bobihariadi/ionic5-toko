@@ -61,19 +61,20 @@ export class AppComponent {
     });
  
     // Notification was really clicked/opened
-    // this.oneSignal.handleNotificationOpened().subscribe(data => {
-    //   // Just a note that the data is a different place here!
-    //   let msg = data.notification.payload.body;
-    //   let title = data.notification.payload.title;
-    //   let additionalData = data.notification.payload.additionalData;
+    this.oneSignal.handleNotificationOpened().subscribe(data => {
+      // Just a note that the data is a different place here!
+      let msg = data.notification.payload.body;
+      let title = data.notification.payload.title;
+      let additionalData = data.notification.payload.additionalData;
       
-    //   this.showAlert(msg, title, additionalData.task);
-    // });
+      this.showAlert(title,msg,additionalData.task);
+    });
  
     this.oneSignal.endInit();
-    this.oneSignal.getIds().then(identity => {     
-      this.storageCtrl.set('playerId', identity.userId); 
-    });
+    // this.oneSignal.getIds().then(identity => {     
+    //   this.storageCtrl.set('playerId', identity.userId); 
+    //   console.log(identity.userId);
+    // });
   }
 
   async showTost(param) {

@@ -19,6 +19,7 @@ export class HomePage implements OnInit {
   subscription: any
   backButtonPressedOnceToExit: boolean = false;
   lastBack: any
+  playerId: any
 
   constructor(
     private storageCtrl: Storage,
@@ -50,6 +51,9 @@ export class HomePage implements OnInit {
   }
 
   async actLogout() {
+    this.storageCtrl.get('playerId').then((val) => {
+      this.playerId = val;
+    });
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
       message: 'Mohon menunggu...',
@@ -69,6 +73,7 @@ export class HomePage implements OnInit {
           loading.dismiss();
           this.storageCtrl.clear();
           this.storageCtrl.set('isLogin', false);
+          this.storageCtrl.set('playerId', this.playerId);
           this.router.navigate(['login'], { replaceUrl: true });
         } else {
           loading.dismiss();

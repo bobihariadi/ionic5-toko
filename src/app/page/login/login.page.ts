@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import {api_base_url} from 'src/config';
+import { OneSignal } from '@ionic-native/onesignal/ngx';
 
 
 @Component({
@@ -25,22 +26,27 @@ export class LoginPage implements OnInit {
     private toastCtrl: ToastController,
     private storageCtrl: Storage,
     public router: Router,
+    private oneSignal: OneSignal,
     private statusBar: StatusBar,
     private platform: Platform
   ) {
     this.statusBar.overlaysWebView(true);
-    this.statusBar.backgroundColorByHexString('#008000')
-    this.storageCtrl.get('isLogin').then((val) => {
-      if (val) {
-        this.router.navigate(['home'],{replaceUrl: true});
-      }
-    });
+    this.statusBar.backgroundColorByHexString('#008000');
+    
   }
 
   ngOnInit() {
-    this.storageCtrl.get('playerId').then((val) => {
-      this.playerId = val;
+    this.oneSignal.startInit('240edd41-51c0-4b54-adc4-5c42cc8b5fa2', '370691792130');
+    this.oneSignal.endInit();
+    this.oneSignal.getIds().then(identity => {     
+      this.storageCtrl.set('playerId', identity.userId); 
+      this.playerId = identity.userId; 
+      console.log(identity.userId);
     });
+
+    // this.storageCtrl.get('playerId').then((val) => {
+    //   this.playerId = val;
+    // });
     this.storageCtrl.get('isLogin').then((val) => {
       if (val) {
         this.router.navigate(['home'],{replaceUrl: true});
@@ -48,7 +54,10 @@ export class LoginPage implements OnInit {
     });
   }
 
+  
+
   goLogin() {
+    console.log(this.playerId);
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Basic ' + btoa(this.username + ':' + this.password));
@@ -73,7 +82,9 @@ export class LoginPage implements OnInit {
         this.showTost('Berhasil Login');
         this.storageCtrl.set('isLogin', true);
         this.storageCtrl.set('dataLogin', data);
-        this.router.navigate(['home'],{replaceUrl: true});
+        setTimeout(() => {
+          this.router.navigate(['home'],{replaceUrl: true});          
+        }, 2000);
       }, error => {
         console.log(error);
         this.showTost(error.error.text);
@@ -90,6 +101,14 @@ export class LoginPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.oneSignal.startInit('240edd41-51c0-4b54-adc4-5c42cc8b5fa2', '370691792130');
+    this.oneSignal.endInit();
+    this.oneSignal.getIds().then(identity => {     
+      this.storageCtrl.set('playerId', identity.userId); 
+      this.playerId = identity.userId; 
+      console.log(identity.userId);
+    });
+    
     this.subscription = this.platform.backButton.subscribe(() => {
         navigator['app'].exitApp();
     });
