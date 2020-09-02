@@ -1,1 +1,1 @@
-export const api_base_url = "http://103.29.187.169/ci-restjwt/";//103.29.187.169
+export const api_base_url = "http://103.29.187.169/ci-restjwt/api/v2/";//103.29.187.169

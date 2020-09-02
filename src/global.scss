@@ -32,3 +32,10 @@
     --color: #008000;
     top: 30px;
 }
+
+.copytext{
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text; 
+}

@@ -16,12 +16,30 @@
     </div>
   </div>
   <div class="ion-padding scroll-content" *ngIf="showList">
+    <ion-item>
+      <ion-label position="stacked" >Cabang</ion-label>
+      <ion-select [(ngModel)]="branch_id" disabled="{{isdisabled}}" (ionChange)="onChangeCabang($event)" >
+        <ion-select-option type="text" *ngFor="let items of arrCabang" value="{{items.branch_id}}">{{items.branch_name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
     <ion-card *ngFor="let item of arrBelanja">
       <ion-item class="ion-activated">
         <ion-label>Batch: {{item.tmp_batch}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label class="ion-text-wrap">Kode Barang: {{item.tmp_code}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label class="ion-text-wrap">{{item.nama_barang}}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="item.tmp_tipe_beli =='G'">
+        <ion-label class="ion-text-wrap">Tipe Beli: Grosir</ion-label>
+      </ion-item>
+      <ion-item *ngIf="item.tmp_tipe_beli =='E'">
+        <ion-label class="ion-text-wrap">Tipe Beli: Eceran</ion-label>
+      </ion-item>
+      <ion-item >
+        <ion-label class="ion-text-wrap">Cabang: {{item.branch_name}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label slot="start">{{item.tmp_jml}} X {{item.tmp_harga_real}}</ion-label>
@@ -46,7 +64,7 @@
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-toolbar>
-    <ion-button expand="full"  size="large"  (click)="actBayar()" disabled="{{isDisabled}}" >
+    <ion-button expand="full"  size="large"  (click)="actBayar()" >
       Bayar</ion-button>
   </ion-toolbar>
 </ion-footer>

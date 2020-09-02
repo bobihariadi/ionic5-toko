@@ -29,6 +29,17 @@ export class TransaksiPage implements OnInit {
   branch_id: any
   startDate: any=new Date().toISOString(); 
   endDate: any
+  tipe_transaksi: any = 'J'
+  arrTipeTransaksi: any[] = [
+    {
+      'val': 'J',
+      'valdesc': 'Jual'
+    },
+    {
+      'val': 'B',
+      'valdesc': 'Beli'
+    }
+  ]
 
   constructor(
     private router: Router,
@@ -73,8 +84,10 @@ export class TransaksiPage implements OnInit {
       addWhere = " and a.create_date <= DATE_ADD(date_format('"+endDate+"','%Y%m%d'), INTERVAL 1 DAY) ";
     }
 
-    let where = 'where 1=1 ';
-    
+    let where = 'where 1=1';
+    if(this.tipe_transaksi != ""){
+      where = where+ " and a.jenis='"+this.tipe_transaksi+"'";
+    }
     if(this.branch_id != ""){
       where = where+ ' and a.branch_id ='+this.branch_id;
     }
@@ -89,7 +102,7 @@ export class TransaksiPage implements OnInit {
       "where": where+addWhere
     };
 
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
         this.arrList = [];
         this.arrList = data;
@@ -136,8 +149,10 @@ export class TransaksiPage implements OnInit {
       addWhere = " and a.create_date <= DATE_ADD(date_format('"+endDate+"','%Y%m%d'), INTERVAL 1 DAY) ";
     }
     
-    let where = 'where 1=1 ';
-    
+    let where = 'where 1=1';
+    if(this.tipe_transaksi != ""){
+      where = where+ " and a.jenis='"+this.tipe_transaksi+"'";
+    }
     if(this.branch_id != ""){
       where = where+ ' and a.branch_id ='+this.branch_id;
     }
@@ -153,7 +168,7 @@ export class TransaksiPage implements OnInit {
       "where": where+addWhere
     };
 
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
         event.target.complete();
         this.arrdata = data;
@@ -199,6 +214,12 @@ export class TransaksiPage implements OnInit {
     this.getData();
   }
 
+  actTransaksi(e:any){
+    this.tipe_transaksi = e.target.value;
+    this.page = 0;
+    this.getData();
+  }
+
   cleared(ev: any){
     const val = ev.target.value;
     this.searchTerm = val;
@@ -221,7 +242,7 @@ export class TransaksiPage implements OnInit {
         "where": where
       };
 
-      this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+      this.http.post(api_base_url + 'master', arrdata, { headers: headers })
         .subscribe(data => {
           resolve(data);
         }, error => {

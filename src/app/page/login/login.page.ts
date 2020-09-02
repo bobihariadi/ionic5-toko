@@ -18,6 +18,7 @@ export class LoginPage implements OnInit {
   username: string="";
   password: string="";
   subscription: any
+  playerId: any
 
   constructor(
     private http: HttpClient,
@@ -37,6 +38,9 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
+    this.storageCtrl.get('playerId').then((val) => {
+      this.playerId = val;
+    });
     this.storageCtrl.get('isLogin').then((val) => {
       if (val) {
         this.router.navigate(['home'],{replaceUrl: true});
@@ -52,16 +56,21 @@ export class LoginPage implements OnInit {
     let arrdata = {
       "action": "loginapp",
       "username": this.username,
-      "table": "M_USER"
+      "table": "M_USER",
+      "playerid": this.playerId
     };
 
     if ((!this.username) || (!this.password)) {
-      this.showTost('Username or Password canot be empty');
+      this.showTost('Username atau Password harus diisi');
       return false;
     }
-    this.http.post(api_base_url+'api/v2/login', arrdata, { headers: headers })
+    this.http.post(api_base_url+'login', arrdata, { headers: headers })
       .subscribe(data => {
-        this.showTost('Success');
+        if(data == 'N'){
+          this.showTost('User tidak aktif');
+          return false;
+        }
+        this.showTost('Berhasil Login');
         this.storageCtrl.set('isLogin', true);
         this.storageCtrl.set('dataLogin', data);
         this.router.navigate(['home'],{replaceUrl: true});
@@ -74,7 +83,7 @@ export class LoginPage implements OnInit {
   async showTost(param) {
     let toast = await this.toastCtrl.create({
       message: param,
-      duration: 3000,
+      duration: 1000,
       position: "bottom"
     });
     toast.present();

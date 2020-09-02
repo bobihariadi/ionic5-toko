@@ -68,7 +68,7 @@ export class ListprinterPage implements OnInit {
   async showTost(param) {
     let toast = await this.toastCtrl.create({
       message: param,
-      duration: 3000,
+      duration: 1000,
       position: "bottom"
     });
     toast.present();

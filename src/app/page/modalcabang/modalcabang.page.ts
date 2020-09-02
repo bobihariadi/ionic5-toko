@@ -69,7 +69,7 @@ export class ModalcabangPage implements OnInit {
       "where": where
     };
 
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
         this.nama = data['branch_name'];
         this.alamat = data['branch_address'];
@@ -91,17 +91,17 @@ export class ModalcabangPage implements OnInit {
   async saveForm(){
     const alert = await this.alerCtrl.create({
       cssClass: 'my-custom-class',
-      header: 'Confirm!',
-      message: 'Are you sure?',
+      header: 'Pemberitahuan!',
+      message: 'Simpan data ini?',
       buttons: [
         {
-          text: 'No',
+          text: 'Tidak',
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => {
           }
         }, {
-          text: 'Yes',
+          text: 'Ya',
           handler: () => {
             this.saveFormCommit();
           }
@@ -115,7 +115,7 @@ export class ModalcabangPage implements OnInit {
   async saveFormCommit() {
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
-      message: 'Please wait...',
+      message: 'Mohon menunggu...',
     });
     await loading.present();
 
@@ -134,15 +134,15 @@ export class ModalcabangPage implements OnInit {
       "where": {"branch_id":this.passId}
     };
 
-    this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'postdata', arrdata, { headers: headers })
       .subscribe(data => {
         console.log(data);  
         loading.dismiss();
-        this.showTost('Success');
+        this.showTost('Berhasil simpan data');
         this.closeModal();
       }, error => {
         loading.dismiss();
-        this.showTost('Failed');
+        this.showTost('Gagal');
         console.log(error);
       })
   }
@@ -150,7 +150,7 @@ export class ModalcabangPage implements OnInit {
   async showTost(param) {
     let toast = await this.toastCtrl.create({
       message: param,
-      duration: 3000,
+      duration: 1000,
       position: "bottom"
     });
     toast.present();

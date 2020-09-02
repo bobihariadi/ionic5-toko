@@ -24,6 +24,7 @@ export class JualPage implements OnInit {
   arrBelanja:any = []
   arrReturn: any = []
   id_barang: any
+  arrCabang: any
   showList: boolean = false;
   jwt: any
   user_id: any
@@ -31,7 +32,9 @@ export class JualPage implements OnInit {
   arrdata:any
   batch:any
   total: any = 0
-  branch_id: any
+  branch_id: any = 1
+  isdisabled: any = false
+  role: any
   arrTipeBeli: any[] = [
     {
       'val': 'E',
@@ -61,20 +64,24 @@ export class JualPage implements OnInit {
     this.storageCtrl.get('isLogin').then((val) => {
       this.statusBar.styleBlackTranslucent();
       this.statusBar.backgroundColorByHexString('#008000');
-      console.log(val);
       if(!val){
         this.router.navigate(['login'],{replaceUrl: true});
       }
-    });
+    });    
    }
 
   ngOnInit() {
-    this.kode = '';
-    this.storageCtrl.get('dataLogin').then((data) => {
+    this.kode = '';  
+    this.storageCtrl.get('dataLogin').then(async (data) => {
       this.jwt = data[0].jwt;
-      this.user_id = data[0].id;
+      this.user_id = data[0].id;      
+      this.arrCabang = await this.getCabang();
       this.branch_id = data[0].branch_id;
-    });
+      this.role = data[0].level;
+      if(this.role != '1'){
+        this.isdisabled = true;
+      }
+    }); 
     this.storageCtrl.get('dataBatch').then((val) => {
       if(!val){
         const d = new Date();
@@ -86,7 +93,7 @@ export class JualPage implements OnInit {
         this.batch = val;
       }
       this.getBelanja();
-    });
+    });   
   }
 
   getScan() {
@@ -125,6 +132,30 @@ export class JualPage implements OnInit {
       ]
     });
     await alert.present();
+  }
+
+  getCabang() {
+    return new Promise(resolve => {
+      let headers = new HttpHeaders();
+      headers.append('Content-Type', 'application/json');
+      headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+      let where = "";
+      let arrdata = {
+        "action": "arraytable",
+        "table": "m_branch",
+        "limit": "",
+        "order": "", 
+        "where": where
+      };
+
+      this.http.post(api_base_url + 'master', arrdata, { headers: headers })
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          console.log(error);
+        })
+    })
   }
 
   async actBayar(){
@@ -174,7 +205,7 @@ export class JualPage implements OnInit {
       "where": {"tmp_batch":this.batch}
     };
 
-    this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'postdata', arrdata, { headers: headers })
       .subscribe(data => {
         loading.dismiss();
         this.showTost('Berhasil dibatalkan');
@@ -189,13 +220,18 @@ export class JualPage implements OnInit {
 
   getHarga(){
     let tot = this.kode.length;
-    if(tot <= 4){
+    if(tot <= 3){
+      this.nama = null;
+      this.harga = 0;
+      this.jml = 1;
+      this.sub_harga = 0;
+      this.id_barang = null;
       return false;
     };
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = "where b.code ='" + this.kode +"' and a.tipe_beli='"+ this.tipe_beli +"'";
+    let where = "where b.code ='" + this.kode +"' and a.tipe_beli='"+ this.tipe_beli +"' and b.branch_id ="+this.branch_id;
     
     let arrdata = {
       "action": "cekharga",
@@ -204,7 +240,7 @@ export class JualPage implements OnInit {
       "order": "",
       "where": where
     };
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
     .subscribe(data => {
       this.arrList = data;
       if (!this.arrList.length) {
@@ -251,10 +287,15 @@ export class JualPage implements OnInit {
   async showTost(param) {
     let toast = await this.toastCtrl.create({
       message: param,
-      duration: 2000,
+      duration: 1000,
       position: "bottom"
     });
     toast.present();
+  }
+
+  onChangeCabang(e:any){
+    this.branch_id = e.target.value;
+    this.getHarga();
   }
 
   onChange(e:any){
@@ -266,7 +307,7 @@ export class JualPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = "where b.code ='" + this.kode +"' and a.tipe_beli='"+ this.tipe_beli +"'";
+    let where = "where b.code ='" + this.kode +"' and a.tipe_beli='"+ this.tipe_beli +"' and b.branch_id ="+this.branch_id;
     
     let arrdata = {
       "action": "cekharga",
@@ -275,11 +316,18 @@ export class JualPage implements OnInit {
       "order": "",
       "where": where
     };
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
     .subscribe(data => {
       this.arrList = data;
       if (!this.arrList.length) {
         console.log('not found');
+        let tipebelidesc = 'Grosir';
+        if(this.tipe_beli == 'E')
+        {
+          tipebelidesc = 'Eceran';
+        }
+        this.showTost('Harga '+tipebelidesc +' tidak ditemukan.');
+        this.harga_real = 0;
       } else {
           this.id_barang = data[0].id_barang;
           this.nama = data[0].nama_barang;
@@ -307,16 +355,16 @@ export class JualPage implements OnInit {
           "where": where
         };
   
-        this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+        this.http.post(api_base_url + 'master', arrdata, { headers: headers })
           .subscribe(data => {
             let jumlah = parseInt(data['jml']) - this.jml;
             let returnValue = false;
             if(jumlah <=0 ){
               returnValue = true;
             }
-            if((this.tipe_beli =='G') && (parseInt(data['jml']) < (12*this.jml))){
-              returnValue = true;              
-            }
+            // if((this.tipe_beli =='G') && (parseInt(data['jml']) < (12*this.jml))){
+            //   returnValue = true;              
+            // }
 
             resolve(returnValue);
           }, error => {
@@ -362,7 +410,7 @@ export class JualPage implements OnInit {
       "where": ""
     };
 
-    this.http.post(api_base_url + 'api/v2/postdata', this.arrdata, { headers: headers })
+    this.http.post(api_base_url + 'postdata', this.arrdata, { headers: headers })
       .subscribe(data => {
         console.log(data);    
           this.showTost('Data berhasil ditambahkan');
@@ -385,20 +433,20 @@ export class JualPage implements OnInit {
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
 
-    let where = '';
+    let where = "where tmp_jenis='J'";
     if (this.batch != "" || this.batch== null) {
-      where = "where tmp_batch like '%" + this.batch + "%'";
+      where += " and a.tmp_batch like '%" + this.batch + "%'";
     }
 
     let arrdata = {
-      "action": "arraytable",
-      "table": "tmp_transaksi",
+      "action": "arraybelanja",
+      "table": "",
       "limit": "",
-      "order": "order by tmp_id",
+      "order": " order by a.tmp_id desc ",
       "where": where
     };
 
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
         this.arrReturn =  data;
         if (!this.arrReturn.length) {
@@ -463,7 +511,7 @@ export class JualPage implements OnInit {
       "where": {"tmp_id":id}
     };
 
-    this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'postdata', arrdata, { headers: headers })
       .subscribe(data => {
         console.log(data);  
         this.getBelanja();

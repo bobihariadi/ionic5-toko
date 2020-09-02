@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
+import { OneSignal } from '@ionic-native/onesignal/ngx'
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,6 +28,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
     SplashScreen,
     BarcodeScanner,
     BluetoothSerial,
+    OneSignal,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

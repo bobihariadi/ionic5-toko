@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title slot="end">Laporan</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <div class="login-header">
+    <div class="login-header-icon">
+      <img src="assets/img/bg-header.jpg">
+      <ion-text class="header-text">
+      </ion-text>
+    </div>
+  </div>
+  
+  
+  <div  class="ion-padding scroll-content">
+    <div class="branch" *ngIf="isAdministrator">
+      <ion-item>
+        <ion-label position="floating">Cabang</ion-label>
+        <ion-select [(ngModel)]="branch_id" (ionChange)="actCabang($event)">
+          <ion-select-option type="text" *ngFor="let item of arrCabang" value="{{item.branch_id}}">{{item.branch_name}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>      
+    </div>  
+    <div >
+      <ion-item>
+        <ion-label position="floating">Transaksi</ion-label>
+        <ion-select [(ngModel)]="tipe_transaksi" (ionChange)="actTransaksi($event)">
+          <ion-select-option type="text" *ngFor="let trans of arrTipeTransaksi" value="{{trans.val}}">{{trans.valdesc}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>      
+    </div>
+    <div>
+      <ion-row>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="floating">Tanggal Awal</ion-label>
+            <ion-datetime displayFormat="DD-MM-YYYY"  placeholder="Pilih Tanggal" [(ngModel)]="startDate" (ionCancel)="clearTgl('startDate')"  (ionChange)="getDataChange()" ></ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="floating">Tanggal Akhir</ion-label>
+            <ion-datetime displayFormat="DD-MM-YYYY"  placeholder="Pilih Tanggal" [(ngModel)]="endDate" (ionCancel)="clearTgl('endDate')" (ionChange)="getDataChange()" ></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+
+  <div class="ion-padding" *ngIf="showList">
+    <ion-card *ngFor="let list of arrList"> 
+      <ion-item>
+        <ion-label>Jumlah barang</ion-label>
+        <ion-text slot="end"><b>{{list.jml}} pcs</b></ion-text>
+      </ion-item> 
+      <ion-item>
+        <ion-label>Total</ion-label>
+        <ion-text slot="end"><b>Rp {{list.total}}</b></ion-text>
+      </ion-item> 
+    </ion-card>
+  </div>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-toolbar>
+    <ion-button expand="full" slot="start" size="large" style="min-width: 100%;border-radius: 0px;" (click)="actLaporan()">Cek</ion-button>
+  </ion-toolbar>
+</ion-footer>

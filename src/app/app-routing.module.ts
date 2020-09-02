@@ -87,6 +87,14 @@ const routes: Routes = [
     path: 'listprinter',
     loadChildren: () => import('./page/listprinter/listprinter.module').then( m => m.ListprinterPageModule)
   },
+  {
+    path: 'profile',
+    loadChildren: () => import('./page/profile/profile.module').then( m => m.ProfilePageModule)
+  },
+  {
+    path: 'laporan',
+    loadChildren: () => import('./page/laporan/laporan.module').then( m => m.LaporanPageModule)
+  },
 ];
 
 @NgModule({ 

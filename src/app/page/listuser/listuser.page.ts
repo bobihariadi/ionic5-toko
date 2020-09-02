@@ -69,17 +69,17 @@ export class ListuserPage implements OnInit {
   async confimData(param) {
     const alert = await this.alerCtrl.create({
       cssClass: 'my-custom-class',
-      header: 'Confirm!',
-      message: 'Are you sure to <strong>non active</strong> this user?',
+      header: 'Pemberitahuan!',
+      message: 'Yakin <strong>hapus</strong> user ini?',
       buttons: [
         {
-          text: 'No',
+          text: 'Tidak',
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => {
           }
         }, {
-          text: 'Yes',
+          text: 'Ya',
           handler: () => {
             this.delData(param);
           }
@@ -93,7 +93,7 @@ export class ListuserPage implements OnInit {
   async delData(id){
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
-      message: 'Please wait...',
+      message: 'Mohon menunggu...',
     });
     await loading.present();
 
@@ -102,24 +102,22 @@ export class ListuserPage implements OnInit {
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
     
     let arrdata = {
-      "action": "Edit",
+      "action": "Del",
       "table": "m_user",
-      "data": {
-        "status_user": "0"
-      },
+      "data": "",
       "except":"",
       "where": {"id":id}
     };
 
-    this.http.post(api_base_url + 'api/v2/postdata', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'postdata', arrdata, { headers: headers })
       .subscribe(data => {
         this.page = 0;  
         this.getData();
         loading.dismiss();
-        this.showTost('Deleted');
+        this.showTost('Berhasil');
       }, error => {
         loading.dismiss();
-        this.showTost('Failed');
+        this.showTost('Gagal');
         console.log(error);
       })
   }
@@ -127,7 +125,7 @@ export class ListuserPage implements OnInit {
   async showTost(param) {
     let toast = await this.toastCtrl.create({
       message: param,
-      duration: 3000,
+      duration: 1000,
       position: "bottom"
     });
     toast.present();
@@ -149,7 +147,7 @@ export class ListuserPage implements OnInit {
       "where": where
     };
 
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
         this.arrList = data;
         if (event) {
@@ -195,7 +193,7 @@ export class ListuserPage implements OnInit {
       "where": where
     };
 
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
         event.target.complete();
         this.arrdata = data;

@@ -1,22 +1,15 @@
-ion-header ion-toolbar {
+ion-toolbar {
     --background: transparent;
     --ion-color-base: transparent !important;
     ion-title{
         color: #ffffff;
-    };
+    }
 }
 
 .login-header-icon {
     display: flex;
     border: 0px;
     background-repeat: no-repeat;
-}
-
-.header-text{
-    padding-top: 50px;
-    z-index: 9;
-    padding-left: 20px;
-    color: #000000;
 }
 
 .login-header-icon img{
@@ -30,21 +23,8 @@ ion-header ion-toolbar {
 }
 
 .scroll-content {    
-    margin-top: 110px;
+    margin-top: 165px;
     z-index: 1;
-}
-
-.scan{
-    --background:#008000 !important;
-}
-
-.btambah{
-    --background: #008000 !important;
-    margin-top: 20px;
-}
-
-.unbounded{
-    background-color:#008000;
 }
 
 ion-footer ion-button{
@@ -52,13 +32,4 @@ ion-footer ion-button{
     margin-left: 0px;
     background-color: transparent;
     --background: #008000;
-}
-
-.rata_kanan{
-    text-align: right;
-}
-
-.iconClose{
-    position: relative;
-    right: 0;
 }

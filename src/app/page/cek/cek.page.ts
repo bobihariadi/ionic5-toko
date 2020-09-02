@@ -15,7 +15,10 @@ export class CekPage implements OnInit {
   arrList:any
   showList: boolean = false;
   jwt: any
-
+  role: any
+  isAdministrator: any = false
+  arrCabang: any
+  branch_id: any
   constructor(
     private storageCtrl: Storage,
     private router: Router,
@@ -32,8 +35,14 @@ export class CekPage implements OnInit {
 
   ngOnInit() {
     this.kode = '';
-    this.storageCtrl.get('dataLogin').then((data) => {
+    this.storageCtrl.get('dataLogin').then(async (data) => {
       this.jwt = data[0].jwt;
+      this.role = data[0].level;
+      this.arrCabang = await this.getCabang();
+      this.branch_id = data[0].branch_id;
+      if(this.role == '1'){
+        this.isAdministrator = true;
+      }
     });
   }
 
@@ -48,10 +57,14 @@ export class CekPage implements OnInit {
   }
 
   getHarga(){
+    let tot = this.kode.length;
+    if(tot <= 3){
+      return false;
+    }
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = "where b.code ='" + this.kode +"'";
+    let where = "where b.code ='" + this.kode +"' and b.branch_id ="+this.branch_id;
     
     let arrdata = {
       "action": "cekharga",
@@ -60,7 +73,7 @@ export class CekPage implements OnInit {
       "order": "",
       "where": where
     };
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
     .subscribe(data => {
         this.arrList = data;
         if (!this.arrList.length) {
@@ -71,6 +84,30 @@ export class CekPage implements OnInit {
       }, error => {
         console.log(error);
       })
+  }
+
+  getCabang() {
+    return new Promise(resolve => {
+      let headers = new HttpHeaders();
+      headers.append('Content-Type', 'application/json');
+      headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
+
+      let where = "";
+      let arrdata = {
+        "action": "arraytable",
+        "table": "m_branch",
+        "limit": "",
+        "order": "", 
+        "where": where
+      };
+
+      this.http.post(api_base_url + 'master', arrdata, { headers: headers })
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          console.log(error);
+        })
+    })
   }
 
 }

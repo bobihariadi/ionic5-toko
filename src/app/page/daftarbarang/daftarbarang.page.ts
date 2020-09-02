@@ -53,7 +53,7 @@ export class DaftarbarangPage implements OnInit {
       "where": where
     };
 
-    this.http.post(api_base_url + 'api/v2/master', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
         this.arrList = data;
         this.showList = true;

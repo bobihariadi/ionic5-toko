@@ -52,7 +52,7 @@ export class HomePage implements OnInit {
   async actLogout() {
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
-      message: 'Please wait...',
+      message: 'Mohon menunggu...',
     });
     await loading.present();
 
@@ -63,7 +63,7 @@ export class HomePage implements OnInit {
       "action": "logoutapp"
     };
 
-    this.http.post(api_base_url + 'api/v2/logout', arrdata, { headers: headers })
+    this.http.post(api_base_url + 'logout', arrdata, { headers: headers })
       .subscribe(data => {
         if (data = 'Ok') {
           loading.dismiss();
@@ -82,17 +82,17 @@ export class HomePage implements OnInit {
   async goToLogout() {
     const alert = await this.alerCtrl.create({
       cssClass: 'my-custom-class',
-      header: 'Confirm!',
-      message: 'Are you sure to <strong>logout</strong>!!!',
+      header: 'Pemberitahuan!',
+      message: 'Yakin untuk <strong>keluar</strong>!!!',
       buttons: [
         {
-          text: 'No',
+          text: 'Tidak',
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => {
           }
         }, {
-          text: 'Yes',
+          text: 'Ya',
           handler: () => {
             this.actLogout();
           }

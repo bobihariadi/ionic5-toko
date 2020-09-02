@@ -1,34 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams, LoadingController, ToastController, AlertController } from '@ionic/angular';
-import { Storage } from '@ionic/storage';
+import { ModalController, AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { api_base_url } from 'src/config';
 
 @Component({
-  selector: 'app-modaluser',
-  templateUrl: './modaluser.page.html',
-  styleUrls: ['./modaluser.page.scss'],
+  selector: 'app-profile',
+  templateUrl: './profile.page.html',
+  styleUrls: ['./profile.page.scss'],
 })
-export class ModaluserPage implements OnInit {
-  passId: number
-  action: string
-  jwt: any
-  arrList: any
-  arrCabang: any
-  arrRole: any
-  fakeList: Array<any> = new Array(4);
+export class ProfilePage implements OnInit {
+  fakeList: Array<any> = new Array(7);
   showList: boolean = false;
-  isDisabled: boolean = false;
-  id: number
-
+  arrList: any = []
+  jwt: any
+  page: number = 0
+  limit: number = 5
+  totalRow: number = 0
+  arrdata: any = []
+  searchTerm: string = "";
+  role: any
   password: any
   username: any
   full_name: any
-  role: any
   cabang:any
-  arrdata: any
-  isactive: string = "1"
+  arrCabang: any
+  arrRole: any
+  user_id: any
+  branch_id: any
+  isactive: string
+  isAdministrator: any = false
+  notif: any
+  playerid: any
   listActive: any[] = [
     {
       'val': '1',
@@ -39,16 +43,24 @@ export class ModaluserPage implements OnInit {
       'valdesc': 'Tidak'
     }
   ]
-
+  listNotif: any[] = [
+    {
+      'val': 'Y',
+      'valdesc': 'Ya'
+    },
+    {
+      'val': 'N',
+      'valdesc': 'Tidak'
+    }
+  ]
   constructor(
     private modalCtrl: ModalController,
-    private navParams: NavParams,
-    private storageCtrl: Storage,
     private router: Router,
+    private storageCtrl: Storage,
     private http: HttpClient,
+    private alerCtrl: AlertController,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController,
-    private alerCtrl: AlertController
+    private toastCtrl: ToastController
   ) { 
     this.storageCtrl.get('isLogin').then((val) => {
       if (!val) {
@@ -61,19 +73,13 @@ export class ModaluserPage implements OnInit {
   }
 
   ngOnInit() {
-    this.passId = this.navParams.get('pass_id');
-    this.action = this.navParams.get('action');
     this.storageCtrl.get('dataLogin').then(async (data) => {
       this.jwt = data[0].jwt;
-
-      if (this.action == 'Edit') {
-        this.isDisabled = true;
-        this.getData();
-      } else {
-        this.arrCabang = await this.getCabang();
-        this.arrRole = await this.getRole();
-        this.showList = true;
-      }
+      this.user_id = data[0].id;
+      this.arrCabang = await this.getCabang();
+      this.branch_id = data[0].branch_id;
+      this.role = data[0].level;
+      this.getData();      
     });
   }
 
@@ -83,7 +89,7 @@ export class ModaluserPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = "where id =" + this.passId;
+    let where = "where id =" + this.user_id;
 
     let arrdata = {
       "action": "rowtable",
@@ -100,15 +106,14 @@ export class ModaluserPage implements OnInit {
         this.full_name = data['full_name'];
         this.cabang = data['branch_id'];
         this.isactive = data['status_user'];
-
+        this.notif = data['notif'];
+        this.playerid = data['player_id'];
         this.showList = true;
-
       }, error => {
         console.log(error);
       })
   }
 
-  //promise
   getCabang() {
     return new Promise(resolve => {
       let headers = new HttpHeaders();
@@ -155,14 +160,6 @@ export class ModaluserPage implements OnInit {
           console.log(error);
         })
     })
-  }
-
-  closeModal() {
-    let datatest = {
-      "aa": "aa",
-      "bb": "bb"
-    }
-    this.modalCtrl.dismiss(datatest);
   }
 
   async saveForm(){
@@ -219,45 +216,29 @@ export class ModaluserPage implements OnInit {
       message: 'Mohon menunggu...',
     });
     await loading.present();
-    if(this.password != null){
-      if(this.username == null || this.role == null || this.full_name == null || this.cabang == null){
-        this.showTost('Lengkapi data');
-        loading.dismiss();
-        return false;
-      }
+    if(this.password != null){      
       this.password = await this.getHas1();
       this.arrdata = {
-        "action": this.action,
+        "action": "Edit",
         "table": "m_user",
-        "data": {
-          "username": this.username,
-          "status_user": this.isactive,
+        "data": {          
           "full_name": this.full_name,
-          "level": this.role,
-          "branch_id": this.cabang,
-          "password" : this.password
+          "password" : this.password,
+          "notif": this.notif 
         },
         "except":"",
-        "where": {"id":this.passId}
+        "where": {"id":this.user_id}
       };
     }else{
-      if(this.username == null || this.role == null || this.full_name == null || this.cabang == null){
-        this.showTost('Lengkapi data');
-        loading.dismiss();
-        return false;
-      }
       this.arrdata = {
-        "action": this.action,
+        "action": "Edit",
         "table": "m_user",
         "data": {
-          "username": this.username,
-          "status_user": this.isactive,
           "full_name": this.full_name,
-          "level": this.role,
-          "branch_id": this.cabang
+          "notif": this.notif
         },
         "except":"",
-        "where": {"id":this.passId}
+        "where": {"id":this.user_id}
       };
     }
     var headers = new HttpHeaders();
@@ -268,10 +249,11 @@ export class ModaluserPage implements OnInit {
     console.log(this.arrdata);
     this.http.post(api_base_url + 'postdata', this.arrdata, { headers: headers })
       .subscribe(data => {
-        console.log(data);  
         loading.dismiss();
         this.showTost('Berhasil simpan data');
-        this.closeModal();
+        setTimeout(() => {
+            this.router.navigate(['master'], { replaceUrl: true });            
+          }, 3000);
       }, error => {
         loading.dismiss();
         this.showTost('Gagal');

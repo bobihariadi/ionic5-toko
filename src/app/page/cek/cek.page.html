@@ -16,8 +16,18 @@
     </div>
   </div>
   
-
+  
   <div  class="ion-padding scroll-content">
+    <div class="branch" *ngIf="isAdministrator">
+      <ion-item>
+        <ion-label position="floating">Cabang</ion-label>
+        <ion-select [(ngModel)]="branch_id" (ionChange)="actCabang($event)">
+          <ion-select-option type="text" value="" >Semua</ion-select-option>
+          <ion-select-option type="text" *ngFor="let item of arrCabang" value="{{item.branch_id}}">{{item.branch_name}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>      
+    </div>
     <ion-item>
       <ion-label position="floating">Kode Barang</ion-label>
       <ion-input type="text" [(ngModel)]="kode" (ionChange)="getHarga()"></ion-input>

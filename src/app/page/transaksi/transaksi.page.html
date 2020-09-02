@@ -27,6 +27,16 @@
         </ion-select>
       </ion-item>      
     </div>
+    <div  *ngIf="isAdministrator">
+      <ion-item>
+        <ion-label position="floating">Transaksi</ion-label>
+        <ion-select [(ngModel)]="tipe_transaksi" (ionChange)="actTransaksi($event)">
+          <ion-select-option type="text" value="" >Semua</ion-select-option>
+          <ion-select-option type="text" *ngFor="let trans of arrTipeTransaksi" value="{{trans.val}}">{{trans.valdesc}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>      
+    </div>
     <div>
       <ion-row>
         <ion-col size="6">
@@ -46,15 +56,17 @@
     <ion-searchbar expand="full" [(ngModel)]="searchTerm" (ionChange)="setFilteredItems($event)" (ionClear)="cleared($event)" ></ion-searchbar>
     <ion-list>
       <ion-item *ngFor="let list of arrList; let i = index">
-        <ion-label>
+        <ion-label class="copytext">
           <p>No. {{i+1}}</p>
           <p>Batch : <b>{{list.batch}}</b></p>
           <p><b>{{list.nama_barang}}</b></p>
-          <p>tipe barang : {{list.tipe_barang}}</p>
+          <p>Tipe barang : {{list.tipe_barang}}</p>
           <p>Tanggal : {{list.tgl}} &nbsp; jam : {{list.jam}}</p>
-          <p>harga : {{list.harga}}</p>
+          <p>Tipe jual : {{list.tipe_jual}}</p>
+          <p>Transaksi : {{list.jenis_jual}}</p>
+          <p>Harga : {{list.harga_real}}</p>
           <p>Jumlah : {{list.jml}}</p>
-          <p>Total : <b>{{list.total}}</b></p>
+          <p>Total : <b>{{list.total_real}}</b></p>
           <p>Cabang : {{list.branch_name}}</p>
         </ion-label>
       </ion-item>
