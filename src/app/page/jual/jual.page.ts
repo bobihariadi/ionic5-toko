@@ -25,7 +25,8 @@ export class JualPage implements OnInit {
   arrReturn: any = []
   id_barang: any
   arrCabang: any
-  showList: boolean = false;
+  showList: boolean = false
+  showLoading: boolean = false
   jwt: any
   user_id: any
   tipe_beli: string = 'E'
@@ -231,7 +232,7 @@ export class JualPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = "where b.code ='" + this.kode +"' and a.tipe_beli='"+ this.tipe_beli +"' and b.branch_id ="+this.branch_id;
+    let where = "where b.isactive ='Y' and b.code ='" + this.kode +"' and a.tipe_beli='"+ this.tipe_beli +"' and b.branch_id ="+this.branch_id;
     
     let arrdata = {
       "action": "cekharga",
@@ -362,10 +363,6 @@ export class JualPage implements OnInit {
             if(jumlah <=0 ){
               returnValue = true;
             }
-            // if((this.tipe_beli =='G') && (parseInt(data['jml']) < (12*this.jml))){
-            //   returnValue = true;              
-            // }
-
             resolve(returnValue);
           }, error => {
             console.log(error);
@@ -375,8 +372,8 @@ export class JualPage implements OnInit {
   }
 
   async actTambah(){
-    if(this.sub_harga==0 || this.kode ==""){
-      this.showTost('Data tidak lengkap');
+    if(this.sub_harga==0 || this.kode =="" || this.id_barang == null){
+      this.showTost('Data tidak lengkap atau kode barang tidak ditemukan');
       return false;
     }
 
@@ -385,6 +382,8 @@ export class JualPage implements OnInit {
       this.showTost('Stok tidak mencukupi');
       return false;
     }
+
+    this.showLoading = true;
 
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
@@ -449,6 +448,7 @@ export class JualPage implements OnInit {
     this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
         this.arrReturn =  data;
+        this.showLoading = false;
         if (!this.arrReturn.length) {
           console.log('tidak ada list belanja');
           this.arrBelanja = [];

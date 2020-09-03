@@ -13,6 +13,7 @@ import { ToastController, AlertController, LoadingController } from '@ionic/angu
   styleUrls: ['./payment.page.scss'],
 })
 export class PaymentPage implements OnInit {
+  fakeList: Array<any> = new Array(7)
   batch: any
   jwt: any
   user_id: any

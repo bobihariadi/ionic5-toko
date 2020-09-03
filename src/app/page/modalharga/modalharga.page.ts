@@ -74,6 +74,7 @@ export class ModalhargaPage implements OnInit {
         this.getData();
       } else {
         this.arrCabang = await this.getCabang();
+        this.tipe_beli = 'E';
         this.showList = true;
       }
     });
@@ -85,6 +86,12 @@ export class ModalhargaPage implements OnInit {
     }else{
       return false;
     }
+  }
+
+  actChange(e:any){
+    this.kode = null;
+    this.nama_barang = null;
+    this.harga = 0;
   }
 
  async getData() {
@@ -155,6 +162,10 @@ export class ModalhargaPage implements OnInit {
   }
 
   async saveForm(){
+    if(this.kode == null || this.harga == null){
+      this.showTost('Data tidak lengkap');
+      return false;
+    }
     const alert = await this.alerCtrl.create({
       cssClass: 'my-custom-class',
       header: 'Pemberitahuan!',
@@ -244,7 +255,10 @@ export class ModalhargaPage implements OnInit {
     if (this.action == 'Add') {
       const modal = await this.modalCtrl.create({
         component: DaftarbarangPage,
-        cssClass: 'my-custom-class'
+        cssClass: 'my-custom-class',
+        componentProps: {
+          'branch_id': this.branch_id
+        }
       });
   
       modal.onDidDismiss().then((r) => {

@@ -56,6 +56,11 @@ export class CekPage implements OnInit {
     });
   }
 
+  actCabang(e:any){
+    this.branch_id = e.target.value;
+    this.getHarga();
+  }
+
   getHarga(){
     let tot = this.kode.length;
     if(tot <= 3){

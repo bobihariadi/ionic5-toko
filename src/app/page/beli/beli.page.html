@@ -58,6 +58,9 @@
       Tambah
     </ion-button>
   </div>
+  <div class="ion-padding loading" *ngIf="showLoading">
+    <ion-spinner name="lines"></ion-spinner>
+  </div>
   <div class="ion-padding" *ngIf="showList">
     <ion-card *ngFor="let item of arrBelanja">
       <ion-item class="ion-activated">

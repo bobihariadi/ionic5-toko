@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>Form {{action}} Harga</ion-title>
+    <ion-title>Daftar Barang</ion-title>
     <ion-buttons (click)="getSelected()" slot="start">
       <ion-icon slot="icon-only" name="close-outline"></ion-icon>
     </ion-buttons>
@@ -17,6 +17,24 @@
           <p>kode barang : {{list['code']}}</p>
         </ion-label>
       </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="!showList" class="scroll-content">
+    <ion-list>      
+      <ion-item *ngFor="let flist of fakeList">
+        <ion-label>
+          <h3>
+            <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+          </h3>
+          <p>
+            <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+          </p>
+          <p>
+            <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+          </p>
+        </ion-label>
+      </ion-item>      
     </ion-list>
   </div>
 </ion-content>

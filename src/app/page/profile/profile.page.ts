@@ -30,7 +30,7 @@ export class ProfilePage implements OnInit {
   user_id: any
   branch_id: any
   isactive: string
-  isAdministrator: any = false
+  isDisabled: any = true
   notif: any
   playerid: any
   listActive: any[] = [

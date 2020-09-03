@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
@@ -11,11 +11,12 @@ import { api_base_url } from 'src/config';
   styleUrls: ['./daftarbarang.page.scss'],
 })
 export class DaftarbarangPage implements OnInit {
-  fakeList: Array<any> = new Array(7);
-  showList: boolean = false;
+  fakeList: Array<any> = new Array(7)
+  showList: boolean = false
   arrList: any = []
   jwt: any
-  searchTerm: string = "";
+  searchTerm: string = ""
+  @Input() branch_id: any
 
   constructor(
     private modalCtrl: ModalController,
@@ -35,15 +36,16 @@ export class DaftarbarangPage implements OnInit {
       this.jwt = data[0].jwt;
       this.getData();
     });
+    console.log(this.branch_id);
   }
 
   getData() {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = '';
+    let where = 'where branch_id ='+this.branch_id;
     if (this.searchTerm != "") {
-      where = "where nama_barang like '%" + this.searchTerm + "%'";
+      where = " and nama_barang like '%" + this.searchTerm + "%'";
     }
     let arrdata = {
       "action": "arraytable",

@@ -9,6 +9,12 @@
 
 <ion-content fullscreen>
   <div class="ion-padding" *ngIf="showList" >
+    <ion-item>
+      <ion-label position="floating" >Cabang</ion-label>
+      <ion-select [(ngModel)]="branch_id" [disabled]="isReadonly()" (ionChange) ="actChange($event)" >
+        <ion-select-option type="text" *ngFor="let items of arrCabang" value="{{items.branch_id}}">{{items.branch_name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
     <ion-item >
       <ion-label position="floating" >Kode Barang</ion-label>
       <ion-input type="text" [readonly]="isReadonly()" [(ngModel)]="kode" (ionFocus)="getBarang()" ></ion-input>
@@ -29,12 +35,6 @@
       <ion-label position="floating" >Harga Barang</ion-label>
       <ion-input type="number" [(ngModel)]="harga" ></ion-input>
     </ion-item>   
-    <ion-item>
-      <ion-label position="floating" >Cabang</ion-label>
-      <ion-select [(ngModel)]="branch_id" [disabled]="isReadonly()" >
-        <ion-select-option type="text" *ngFor="let items of arrCabang" value="{{items.branch_id}}">{{items.branch_name}}</ion-select-option>
-      </ion-select>
-    </ion-item>
     <ion-button (click)="saveForm()" expand="block" fill="clear" class="bSave">
       {{(action == 'Add' ? 'SAVE':'UPDATE')}}
     </ion-button>    

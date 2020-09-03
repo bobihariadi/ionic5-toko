@@ -8,14 +8,6 @@
 </ion-header>
 
 <ion-content fullscreen>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="presentModal('','Add')" *ngIf="isAdministrator">
-    <ion-fab-button>
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-  <ion-refresher slot="fixed" pullFactor="0.5" pullMin="100" pullMax="100" (ionRefresh)="refreshData($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
   <div class="login-header">
     <div class="login-header-icon">
       <img src="assets/img/bg-header.jpg">
@@ -25,7 +17,7 @@
     <ion-item>
       <ion-label position="floating">Username</ion-label>
       <ion-input type="text" [(ngModel)]="username" disabled="{{isDisabled}}"></ion-input>
-      <ion-input type="number" hidden [(ngModel)]="passId"></ion-input>
+      <ion-input type="number" hidden [(ngModel)]="user_id"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label position="floating">Nama Lengkap</ion-label>
@@ -61,7 +53,7 @@
       <ion-input type="text" [(ngModel)]="playerid" autocomplete="off" readonly="{{isDisabled}}"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="floating">Notofi</ion-label>
+      <ion-label position="floating">Notifikasi</ion-label>
       <ion-select [(ngModel)]="notif">
         <ion-select-option type="text" *ngFor="let item of listNotif" value="{{item.val}}">{{item.valdesc}}
         </ion-select-option>

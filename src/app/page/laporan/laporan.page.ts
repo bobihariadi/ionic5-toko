@@ -150,6 +150,20 @@ export class LaporanPage implements OnInit {
     }
   }
 
+  actCabang(e:any){
+    this.branch_id = e.target.value;
+    this.showList = false; 
+  }
+
+  actTransaksi(e:any){
+    this.tipe_transaksi = e.target.value;
+    this.showList = false; 
+  }
+
+  getDataChange(){
+    this.showList = false; 
+  }
+
   getCabang() {
     return new Promise(resolve => {
       let headers = new HttpHeaders();

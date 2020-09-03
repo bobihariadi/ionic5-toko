@@ -18,7 +18,7 @@
       <ion-input type="password" [(ngModel)]="password" autocomplete="off" ></ion-input>
     </ion-item>
     <br><br>
-    <ion-button (click)="goLogin()" expand="full"  >
+    <ion-button (click)="goLogin()" expand="full" disabled="{{isDisabled}}" >
       Login
     </ion-button>
     <div class="tfooter">

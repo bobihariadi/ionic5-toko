@@ -214,6 +214,12 @@ export class ModalbarangPage implements OnInit {
   }
 
   async saveFormCommit() {
+    if(this.kode == null || this.nama_barang == null || this.tipe_barang == null || this.jumlah == null || this.lokasi == null || this.branch_id == null || this.isactive == null )
+    {
+      this.showTost('Data tidak lengkap');
+      return false;
+    }
+
     const loading = await this.loadingCtrl.create({
       cssClass: 'my-custom-class',
       message: 'Mohon menunggu...',

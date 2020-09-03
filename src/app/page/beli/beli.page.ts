@@ -24,7 +24,8 @@ export class BeliPage implements OnInit {
   arrReturn: any = []
   arrCabang: any = []
   id_barang: any
-  showList: boolean = false;
+  showList: boolean = false
+  showLoading: boolean = false
   jwt: any
   user_id: any
   tipe_beli: string = 'G'
@@ -233,7 +234,7 @@ export class BeliPage implements OnInit {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Bearer ' + this.jwt); //bearer
-    let where = "where b.code ='" + this.kode +"'  and b.branch_id ="+this.branch_id;
+    let where = "where b.isactive ='Y' and b.code ='" + this.kode +"'  and b.branch_id ="+this.branch_id;
     
     let arrdata = {
       "action": "cekharga",
@@ -292,10 +293,11 @@ export class BeliPage implements OnInit {
   }
 
   async actTambah(){
-    if(this.sub_harga==0 || this.kode ==""){
+    if(this.sub_harga==0 || this.kode =="" || this.id_barang == null){
       this.showTost('Data tidak lengkap atau kode barang tidak ditemukan');
       return false;
     }
+    this.showLoading = true;
 
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
@@ -361,6 +363,7 @@ export class BeliPage implements OnInit {
 
     this.http.post(api_base_url + 'master', arrdata, { headers: headers })
       .subscribe(data => {
+        this.showLoading = false;
         this.arrReturn =  data;
         if (!this.arrReturn.length) {
           this.arrBelanja = [];

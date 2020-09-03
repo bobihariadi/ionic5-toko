@@ -16,10 +16,11 @@ import { OneSignal } from '@ionic-native/onesignal/ngx';
 
 export class LoginPage implements OnInit {
   fakeList: Array<any> = new Array(5);
-  username: string="";
-  password: string="";
+  username: string=""
+  password: string=""
   subscription: any
-  playerId: any
+  playerId: any = null
+  isDisabled: boolean = false
 
   constructor(
     private http: HttpClient,
@@ -57,10 +58,11 @@ export class LoginPage implements OnInit {
   
 
   goLogin() {
-    console.log(this.playerId);
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers = headers.append('Authorization', 'Basic ' + btoa(this.username + ':' + this.password));
+    
+    this.isDisabled = true;
 
     let arrdata = {
       "action": "loginapp",
@@ -77,6 +79,7 @@ export class LoginPage implements OnInit {
       .subscribe(data => {
         if(data == 'N'){
           this.showTost('User tidak aktif');
+          this.isDisabled = false;
           return false;
         }
         this.showTost('Berhasil Login');
@@ -84,9 +87,10 @@ export class LoginPage implements OnInit {
         this.storageCtrl.set('dataLogin', data);
         setTimeout(() => {
           this.router.navigate(['home'],{replaceUrl: true});          
-        }, 2000);
+        }, 1000);
       }, error => {
         console.log(error);
+        this.isDisabled = false;
         this.showTost(error.error.text);
       })
   }
